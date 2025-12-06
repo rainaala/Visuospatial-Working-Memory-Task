@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 This experiment was created using PsychoPy3 Experiment Builder (v2025.1.1),
-    on Mon Dec  1 22:28:04 2025
+    on Tue Dec  2 06:53:01 2025
 If you publish work using this script the most relevant publication is:
 
     Peirce J, Gray JR, Simpson S, MacAskill M, Höchenberger R, Sogo H, Kastman E, Lindeløv JK. (2019) 
@@ -395,11 +395,12 @@ def run(expInfo, thisExp, win, globalClock=None, thisSession=None):
     method='sequential', 
     extraInfo=expInfo, 
     originPath=-1, 
-    trialList=data.importConditions('experiment_control_files/test1_aln_2025-12-01.csv'), 
+    trialList=data.importConditions('experiment_control_files/test2_aln_2025-12-02.csv'), 
     seed=None, 
     name='myTrials')
     
-    print(myTrials.trialList)
+    print(myTrials.trialList) # This is an Ordered Dict. The Coder uses the TrialHandler structure to go to the next trial. There's a demo. See https://www.psychopy.org/api/data.html#psychopy.data.TrialHandler
+    print(myTrials.trialList[0][path_length])
     
     # --- Initialize components for Routine "start" ---
     textBlank = visual.TextStim(win=win, name='textBlank',
@@ -594,13 +595,15 @@ def run(expInfo, thisExp, win, globalClock=None, thisSession=None):
         
         # Initialize path index
         pathN = 0
-        
+        print(pathN)
         # Filter myTrials down to just THIS trial (how do I iterate over trials in PsychoPy?)
         
         # Get first point from Excel loop
-        if pathN < len(myPaths.trialList):
-            thisPath = myPaths.trialList[pathN]
-            pathEnd = [float(thisPath['xPos']), float(thisPath['yPos'])]
+        if pathN < len(myTrials.trialist.pathLength):
+            #thisPath = myPaths.trialList[pathN]
+            pathEnd = [float(2*rand() - 1), float(2*rand()-1)]
+            print(pathEnd)
+            #pathEnd = [float(thisPath['xPos']), float(thisPath['yPos'])]
         else:
             # No points in Excel, end routine immediately
             continueRoutine = False

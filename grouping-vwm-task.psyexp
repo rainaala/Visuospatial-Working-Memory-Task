@@ -46,7 +46,7 @@
     <Param val="False" valType="bool" updates="None" name="elSimMode"/>
     <Param val="RIGHT_EYE" valType="str" updates="None" name="elTrackEyes"/>
     <Param val="PUPIL_CR_TRACKING" valType="str" updates="None" name="elTrackingMode"/>
-    <Param val="moving-cue" valType="str" updates="None" name="expName"/>
+    <Param val="grouping-vwm-task" valType="str" updates="None" name="expName"/>
     <Param val="" valType="str" updates="None" name="expVersion"/>
     <Param val="on Sync" valType="str" updates="None" name="exportHTML"/>
     <Param val="None" valType="str" updates="None" name="eyetracker"/>
@@ -1041,27 +1041,27 @@
         <Param val="" valType="code" updates="constant" name="stopVal"/>
         <Param val="False" valType="bool" updates="None" name="useWindowParams"/>
       </RoutineSettingsComponent>
-      <CodeComponent name="smooth_code" plugin="None">
-        <Param val="" valType="extendedCode" updates="constant" name="Before Experiment"/>
+      <CodeComponent name="memory_sequence_code" plugin="None">
+        <Param val="import random&amp;#10;&amp;#10;random.seed = 1&amp;#10;&amp;#10;def get_random_path_coord( coords_to_avoid ):&amp;#10;    # Select random x and y values that are different from those in coords_to_avoid&amp;#10;    x = coords_to_avoid[0]&amp;#10;    while abs(x - coords_to_avoid[0]) &lt; 0.2:&amp;#10;        x = round(random.uniform(-1, 1), 1)&amp;#10;    y = coords_to_avoid[1]&amp;#10;    while abs(y - coords_to_avoid[1]) &lt; 0.2:&amp;#10;        y = round(random.uniform(-1, 1), 1)&amp;#10;    coord = (x,y)&amp;#10;    return coord" valType="extendedCode" updates="constant" name="Before Experiment"/>
         <Param val="" valType="extendedCode" updates="constant" name="Before JS Experiment"/>
-        <Param val="myTrials = data.TrialHandler(&amp;#10;nReps=2, &amp;#10;method='sequential', &amp;#10;extraInfo=expInfo, &amp;#10;originPath=-1, &amp;#10;trialList=data.importConditions('experiment_control_files/test2_aln_2025-12-02.csv'), &amp;#10;seed=None, &amp;#10;name='myTrials')&amp;#10;&amp;#10;print(myTrials.trialList) # This is an Ordered Dict. The Coder uses the TrialHandler structure to go to the next trial. There's a demo. See https://www.psychopy.org/api/data.html#psychopy.data.TrialHandler&amp;#10;print(myTrials.trialList[0][path_length])" valType="extendedCode" updates="constant" name="Begin Experiment"/>
+        <Param val="# Set path parameters&amp;#10;path_length = 5&amp;#10;&amp;#10;# Movement speed (adjust for smoothness)&amp;#10;stepSize = 0.005" valType="extendedCode" updates="constant" name="Begin Experiment"/>
         <Param val="" valType="extendedCode" updates="constant" name="Begin JS Experiment"/>
         <Param val="" valType="extendedCode" updates="constant" name="Begin JS Routine"/>
-        <Param val="myTrials&amp;#10;# Start at origin&amp;#10;pathStart = [0, 0]&amp;#10;&amp;#10;# Initialize path index&amp;#10;pathN = 0&amp;#10;print(pathN)&amp;#10;# Filter myTrials down to just THIS trial (how do I iterate over trials in PsychoPy?)&amp;#10;&amp;#10;# Get first point from Excel loop&amp;#10;if pathN &lt; len(myTrials.trialist.pathLength):&amp;#10;    #thisPath = myPaths.trialList[pathN]&amp;#10;    pathEnd = [float(2*rand() - 1), float(2*rand()-1)]&amp;#10;    print(pathEnd)&amp;#10;    #pathEnd = [float(thisPath['xPos']), float(thisPath['yPos'])]&amp;#10;else:&amp;#10;    # No points in Excel, end routine immediately&amp;#10;    continueRoutine = False&amp;#10;&amp;#10;# Movement speed (adjust for smoothness)&amp;#10;stepSize = 0.005&amp;#10;&amp;#10;# Initial circle position&amp;#10;cuePos = tuple(pathStart)&amp;#10;" valType="extendedCode" updates="constant" name="Begin Routine"/>
+        <Param val="# Get locations for this trial&amp;#10;&amp;#10;path_coords = []&amp;#10;## path coords is a list of (x,y) tuples&amp;#10;for segment in range(path_length):&amp;#10;    if segment == 0:&amp;#10;        segment_coord = (0,0)&amp;#10;    else:&amp;#10;        segment_coord = get_random_path_coord(path_coords[segment-1])&amp;#10;&amp;#10;    path_coords.append(segment_coord)&amp;#10;print(path_coords)&amp;#10;&amp;#10;# Initialize path steps&amp;#10;segment = 0&amp;#10;&amp;#10;if segment &lt; path_length:&amp;#10;    path_start = path_coords[segment]&amp;#10;    path_end = path_coors[segment + 1]&amp;#10;else:&amp;#10;    continueRoutine = False&amp;#10;&amp;#10;# Initial circle position&amp;#10;disc_position = path_start&amp;#10;" valType="extendedCode" updates="constant" name="Begin Routine"/>
         <Param val="Py" valType="str" updates="None" name="Code Type"/>
-        <Param val="" valType="extendedCode" updates="constant" name="Each Frame"/>
+        <Param val="# Add disc movement here" valType="extendedCode" updates="constant" name="Each Frame"/>
         <Param val="" valType="extendedCode" updates="constant" name="Each JS Frame"/>
         <Param val="" valType="extendedCode" updates="constant" name="End Experiment"/>
         <Param val="" valType="extendedCode" updates="constant" name="End JS Experiment"/>
         <Param val="" valType="extendedCode" updates="constant" name="End JS Routine"/>
         <Param val="" valType="extendedCode" updates="constant" name="End Routine"/>
         <Param val="False" valType="bool" updates="None" name="disabled"/>
-        <Param val="smooth_code" valType="code" updates="None" name="name"/>
+        <Param val="memory_sequence_code" valType="code" updates="None" name="name"/>
       </CodeComponent>
     </Routine>
   </Routines>
   <Flow>
-    <LoopInitiator loopType="TrialHandler" name="trials_5">
+    <LoopInitiator loopType="TrialHandler" name="trials">
       <Param name="Selected rows" updates="None" val="" valType="str"/>
       <Param name="conditions" updates="None" val="[OrderedDict([('memory_type', 'continuous'), ('probe_type', 'discrete')]), OrderedDict([('memory_type', 'continuous'), ('probe_type', 'continuous')]), OrderedDict([('memory_type', 'discrete'), ('probe_type', 'discrete')]), OrderedDict([('memory_type', 'discrete'), ('probe_type', 'continuous')])]" valType="str"/>
       <Param name="conditionsFile" updates="None" val="experiment_control_files/trial-types_aln_2025-12-01.csv" valType="file"/>
@@ -1069,82 +1069,10 @@
       <Param name="isTrials" updates="None" val="True" valType="bool"/>
       <Param name="loopType" updates="None" val="random" valType="str"/>
       <Param name="nReps" updates="None" val="2" valType="num"/>
-      <Param name="name" updates="None" val="trials_5" valType="code"/>
-      <Param name="random seed" updates="None" val="" valType="code"/>
-    </LoopInitiator>
-    <Routine name="VWM_memory_display"/>
-    <LoopTerminator name="trials_5"/>
-    <Routine name="start"/>
-    <LoopInitiator loopType="TrialHandler" name="smooth_full_trials">
-      <Param name="Selected rows" updates="None" val="" valType="str"/>
-      <Param name="conditions" updates="None" val="None" valType="str"/>
-      <Param name="conditionsFile" updates="None" val="" valType="file"/>
-      <Param name="endPoints" updates="None" val="[0, 1]" valType="num"/>
-      <Param name="isTrials" updates="None" val="True" valType="bool"/>
-      <Param name="loopType" updates="None" val="random" valType="str"/>
-      <Param name="nReps" updates="None" val="2" valType="num"/>
-      <Param name="name" updates="None" val="smooth_full_trials" valType="code"/>
-      <Param name="random seed" updates="None" val="" valType="code"/>
-    </LoopInitiator>
-    <Routine name="smooth"/>
-    <Routine name="blank500"/>
-    <Routine name="memoryInstructions"/>
-    <LoopInitiator loopType="TrialHandler" name="trials">
-      <Param name="Selected rows" updates="None" val="" valType="str"/>
-      <Param name="conditions" updates="None" val="[{'xPos': 0.2, 'yPos': 0.3, 'correctAns': 'f'}, {'xPos': -0.1, 'yPos': 0.4, 'correctAns': 'f'}, {'xPos': 0, 'yPos': -0.2, 'correctAns': 'f'}, {'xPos': 0, 'yPos': 0, 'correctAns': 'j'}, {'xPos': -0.2, 'yPos': -0.3, 'correctAns': 'j'}, {'xPos': 0.2, 'yPos': 0.1, 'correctAns': 'j'}, {'xPos': 0.4, 'yPos': 0.3, 'correctAns': 'f'}, {'xPos': 0.1, 'yPos': 0.1, 'correctAns': 'j'}]" valType="str"/>
-      <Param name="conditionsFile" updates="None" val="text_positions.xlsx" valType="file"/>
-      <Param name="endPoints" updates="None" val="[0, 1]" valType="num"/>
-      <Param name="isTrials" updates="None" val="True" valType="bool"/>
-      <Param name="loopType" updates="None" val="random" valType="str"/>
-      <Param name="nReps" updates="None" val="1" valType="num"/>
       <Param name="name" updates="None" val="trials" valType="code"/>
       <Param name="random seed" updates="None" val="" valType="code"/>
     </LoopInitiator>
-    <Routine name="memoryTrialSingle"/>
+    <Routine name="VWM_memory_display"/>
     <LoopTerminator name="trials"/>
-    <LoopTerminator name="smooth_full_trials"/>
-    <Routine name="blank500"/>
-    <Routine name="spacer"/>
-    <LoopInitiator loopType="TrialHandler" name="trials_2">
-      <Param name="Selected rows" updates="None" val="" valType="str"/>
-      <Param name="conditions" updates="None" val="[{'xPos': 0.2, 'yPos': 0.3, 'correctAns': 'f'}, {'xPos': -0.1, 'yPos': 0.4, 'correctAns': 'f'}, {'xPos': 0, 'yPos': -0.2, 'correctAns': 'f'}, {'xPos': 0, 'yPos': 0, 'correctAns': 'j'}, {'xPos': -0.2, 'yPos': -0.3, 'correctAns': 'j'}, {'xPos': 0.2, 'yPos': 0.1, 'correctAns': 'j'}, {'xPos': 0.4, 'yPos': 0.3, 'correctAns': 'f'}, {'xPos': 0.1, 'yPos': 0.1, 'correctAns': 'j'}]" valType="str"/>
-      <Param name="conditionsFile" updates="None" val="text_positions.xlsx" valType="file"/>
-      <Param name="endPoints" updates="None" val="[0, 1]" valType="num"/>
-      <Param name="isTrials" updates="None" val="True" valType="bool"/>
-      <Param name="loopType" updates="None" val="sequential" valType="str"/>
-      <Param name="nReps" updates="None" val="1" valType="num"/>
-      <Param name="name" updates="None" val="trials_2" valType="code"/>
-      <Param name="random seed" updates="None" val="" valType="code"/>
-    </LoopInitiator>
-    <Routine name="jumpy"/>
-    <LoopTerminator name="trials_2"/>
-    <Routine name="spacer2"/>
-    <LoopInitiator loopType="TrialHandler" name="trials_4">
-      <Param name="Selected rows" updates="None" val="" valType="str"/>
-      <Param name="conditions" updates="None" val="[{'originalPathFile': 'seq1.xlsx', 'testPathFile': 'seq1.xlsx', 'isSame': 1}, {'originalPathFile': 'seq2.xlsx', 'testPathFile': 'seq3.xlsx', 'isSame': 0}, {'originalPathFile': 'seq3.xlsx', 'testPathFile': 'seq3.xlsx', 'isSame': 1}]" valType="str"/>
-      <Param name="conditionsFile" updates="None" val="sequenceTrials.xlsx" valType="file"/>
-      <Param name="endPoints" updates="None" val="[0, 1]" valType="num"/>
-      <Param name="isTrials" updates="None" val="True" valType="bool"/>
-      <Param name="loopType" updates="None" val="random" valType="str"/>
-      <Param name="nReps" updates="None" val="1" valType="num"/>
-      <Param name="name" updates="None" val="trials_4" valType="code"/>
-      <Param name="random seed" updates="None" val="" valType="code"/>
-    </LoopInitiator>
-    <LoopInitiator loopType="TrialHandler" name="trials_3">
-      <Param name="Selected rows" updates="None" val="" valType="str"/>
-      <Param name="conditions" updates="None" val="[{'xPos': 0.3, 'yPos': 0.2}, {'xPos': 0.1, 'yPos': 0.4}, {'xPos': 0.6, 'yPos': 0.8}]" valType="str"/>
-      <Param name="conditionsFile" updates="None" val="$testPathFile" valType="file"/>
-      <Param name="endPoints" updates="None" val="[0, 1]" valType="num"/>
-      <Param name="isTrials" updates="None" val="True" valType="bool"/>
-      <Param name="loopType" updates="None" val="random" valType="str"/>
-      <Param name="nReps" updates="None" val="1" valType="num"/>
-      <Param name="name" updates="None" val="trials_3" valType="code"/>
-      <Param name="random seed" updates="None" val="" valType="code"/>
-    </LoopInitiator>
-    <Routine name="memoryTrialSequence"/>
-    <LoopTerminator name="trials_3"/>
-    <Routine name="test_2"/>
-    <LoopTerminator name="trials_4"/>
-    <Routine name="end"/>
   </Flow>
 </PsychoPy2experiment>
