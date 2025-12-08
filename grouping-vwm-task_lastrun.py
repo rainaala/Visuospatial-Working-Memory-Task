@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 This experiment was created using PsychoPy3 Experiment Builder (v2025.1.1),
-    on Sat Dec  6 13:24:53 2025
+    on Sun Dec  7 17:14:52 2025
 If you publish work using this script the most relevant publication is:
 
     Peirce J, Gray JR, Simpson S, MacAskill M, Höchenberger R, Sogo H, Kastman E, Lindeløv JK. (2019) 
@@ -32,7 +32,7 @@ import sys  # to get file system encoding
 
 from psychopy.hardware import keyboard
 
-# Run 'Before Experiment' code from smooth_code
+# Run 'Before Experiment' code from memory_sequence_code
 import random
 
 random.seed = 1
@@ -380,12 +380,49 @@ def run(expInfo, thisExp, win, globalClock=None, thisSession=None):
     # Start Code - component code to be run after the window creation
     
     # --- Initialize components for Routine "VWM_memory_display" ---
-    # Run 'Begin Experiment' code from smooth_code
+    # Run 'Begin Experiment' code from memory_sequence_code
     # Set path parameters
     path_length = 5
+    pause_duration = 0.2 # 200 ms
+    retention_interval = 1.0 # 1000 ms
     
     # Movement speed (adjust for smoothness)
-    stepSize = 0.005
+    step_size = 0.01 # speeding up for debugging
+    #step_size = 0.005
+    
+    # colors 
+    white = [1,1,1]
+    gray = [0,0,0]
+    mem_fix = visual.ShapeStim(
+        win=win, name='mem_fix', vertices='cross',
+        size=(0.05, 0.05),
+        ori=0.0, pos=(0, 0), draggable=False, anchor='center',
+        lineWidth=1.0,
+        colorSpace='rgb', lineColor='gray', fillColor='white',
+        opacity=None, depth=-1.0, interpolate=True)
+    mem_disc = visual.ShapeStim(
+        win=win, name='mem_disc',
+        size=(0.1,0.1), vertices='circle',
+        ori=0.0, pos=[0,0], draggable=False, anchor='center',
+        lineWidth=1.0,
+        colorSpace='rgb', lineColor='white', fillColor='white',
+        opacity=None, depth=-2.0, interpolate=True)
+    
+    # --- Initialize components for Routine "VWM_memory_probe" ---
+    probe_fix = visual.ShapeStim(
+        win=win, name='probe_fix', vertices='cross',
+        size=(0.05, 0.05),
+        ori=0.0, pos=(0, 0), draggable=False, anchor='center',
+        lineWidth=1.0,
+        colorSpace='rgb', lineColor='gray', fillColor='white',
+        opacity=None, depth=-1.0, interpolate=True)
+    probe_disc = visual.ShapeStim(
+        win=win, name='probe_disc',
+        size=(0.1,0.1), vertices='circle',
+        ori=0.0, pos=[0,0], draggable=False, anchor='center',
+        lineWidth=1.0,
+        colorSpace='rgb', lineColor='white', fillColor='white',
+        opacity=None, depth=-2.0, interpolate=True)
     
     # create some handy timers
     
@@ -418,11 +455,11 @@ def run(expInfo, thisExp, win, globalClock=None, thisSession=None):
     # set up handler to look after randomisation of conditions etc
     trials = data.TrialHandler2(
         name='trials',
-        nReps=2.0, 
+        nReps=1.0, 
         method='random', 
         extraInfo=expInfo, 
         originPath=-1, 
-        trialList=data.importConditions('experiment_control_files/trial-types_aln_2025-12-01.csv'), 
+        trialList=data.importConditions('experiment_control_files/trial-types_aln_2025-12-07.csv'), 
         seed=None, 
     )
     thisExp.addLoop(trials)  # add the loop to the experiment
@@ -453,12 +490,12 @@ def run(expInfo, thisExp, win, globalClock=None, thisSession=None):
         # create an object to store info about Routine VWM_memory_display
         VWM_memory_display = data.Routine(
             name='VWM_memory_display',
-            components=[],
+            components=[mem_fix, mem_disc],
         )
         VWM_memory_display.status = NOT_STARTED
         continueRoutine = True
         # update component parameters for each repeat
-        # Run 'Begin Routine' code from smooth_code
+        # Run 'Begin Routine' code from memory_sequence_code
         # Get locations for this trial
         
         path_coords = []
@@ -470,21 +507,23 @@ def run(expInfo, thisExp, win, globalClock=None, thisSession=None):
                 segment_coord = get_random_path_coord(path_coords[segment-1])
         
             path_coords.append(segment_coord)
-        print(path_coords)
-        # 
-        #print(path_coords) 
-        ## Initialize path steps
-        #segment = 0
-        #
-        #if segment < path_length:
-        #    path_start = path_coords[segment]
-        #    path_end = path_coors[segment + 1]
-        #else:
-        #    continueRoutine = False
-        #
-        ## Initial circle position
-        #disc_position = path_start
-        #
+        #print(path_coords)
+        
+        # Initialize path steps
+        segment = 0
+        
+        # set initial disc position
+        disc_position = path_coords[segment]
+        disc_color = white
+        
+        # start pause timer
+        pause_timer = core.CountdownTimer(pause_duration)
+            
+        # set initial endpoint
+        path_end = path_coords[segment + 1]
+        
+        
+        
         # store start times for VWM_memory_display
         VWM_memory_display.tStartRefresh = win.getFutureFlipTime(clock=globalClock)
         VWM_memory_display.tStart = globalClock.getTime(format='float')
@@ -517,6 +556,89 @@ def run(expInfo, thisExp, win, globalClock=None, thisSession=None):
             tThisFlipGlobal = win.getFutureFlipTime(clock=None)
             frameN = frameN + 1  # number of completed frames (so 0 is the first frame)
             # update/draw components on each frame
+            # Run 'Each Frame' code from memory_sequence_code
+            
+            # check if we're paused
+            while pause_timer.getTime() > 0:
+                continue # skip the rest of this
+                
+            if segment >= path_length - 1:
+                continueRoutine = False  # reached last point
+                disc_color = gray
+            else:
+                # update path end and continue
+                path_end = path_coords[segment + 1]
+            
+            # get euclidean distance
+            dx = path_end[0] - disc_position[0]
+            dy = path_end[1] - disc_position[1]
+            
+            distance = (dx**2 + dy**2) ** 0.5
+            
+            if distance > step_size:
+                # move a small step toward the target
+                new_x = disc_position[0] + dx * ( step_size / distance )
+                new_y = disc_position[1] + dy * ( step_size / distance )
+                if memory_type == "continuous":
+                    disc_color = white
+                else:
+                    disc_color = gray
+            else:
+                # we've reached the target, snap to position and update segment counter
+                new_x = path_end[0]
+                new_y = path_end[1]
+                disc_color = white
+                # start pause timer
+                pause_timer = core.CountdownTimer(pause_duration)
+                
+                segment = segment + 1
+                
+                
+            
+            disc_position = (new_x, new_y)
+            
+            
+            # *mem_fix* updates
+            
+            # if mem_fix is starting this frame...
+            if mem_fix.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
+                # keep track of start time/frame for later
+                mem_fix.frameNStart = frameN  # exact frame index
+                mem_fix.tStart = t  # local t and not account for scr refresh
+                mem_fix.tStartRefresh = tThisFlipGlobal  # on global time
+                win.timeOnFlip(mem_fix, 'tStartRefresh')  # time at next scr refresh
+                # add timestamp to datafile
+                thisExp.timestampOnFlip(win, 'mem_fix.started')
+                # update status
+                mem_fix.status = STARTED
+                mem_fix.setAutoDraw(True)
+            
+            # if mem_fix is active this frame...
+            if mem_fix.status == STARTED:
+                # update params
+                pass
+            
+            # *mem_disc* updates
+            
+            # if mem_disc is starting this frame...
+            if mem_disc.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
+                # keep track of start time/frame for later
+                mem_disc.frameNStart = frameN  # exact frame index
+                mem_disc.tStart = t  # local t and not account for scr refresh
+                mem_disc.tStartRefresh = tThisFlipGlobal  # on global time
+                win.timeOnFlip(mem_disc, 'tStartRefresh')  # time at next scr refresh
+                # add timestamp to datafile
+                thisExp.timestampOnFlip(win, 'mem_disc.started')
+                # update status
+                mem_disc.status = STARTED
+                mem_disc.setAutoDraw(True)
+            
+            # if mem_disc is active this frame...
+            if mem_disc.status == STARTED:
+                # update params
+                mem_disc.setFillColor(disc_color, log=False)
+                mem_disc.setPos(disc_position, log=False)
+                mem_disc.setLineColor(disc_color, log=False)
             
             # check for quit (typically the Esc key)
             if defaultKeyboard.getKeys(keyList=["escape"]):
@@ -557,7 +679,191 @@ def run(expInfo, thisExp, win, globalClock=None, thisSession=None):
         VWM_memory_display.tStop = globalClock.getTime(format='float')
         VWM_memory_display.tStopRefresh = tThisFlipGlobal
         thisExp.addData('VWM_memory_display.stopped', VWM_memory_display.tStop)
+        # Run 'End Routine' code from memory_sequence_code
+        # pause for retention interval
+        core.wait(retention_interval)
         # the Routine "VWM_memory_display" was not non-slip safe, so reset the non-slip timer
+        routineTimer.reset()
+        
+        # --- Prepare to start Routine "VWM_memory_probe" ---
+        # create an object to store info about Routine VWM_memory_probe
+        VWM_memory_probe = data.Routine(
+            name='VWM_memory_probe',
+            components=[probe_fix, probe_disc],
+        )
+        VWM_memory_probe.status = NOT_STARTED
+        continueRoutine = True
+        # update component parameters for each repeat
+        # Run 'Begin Routine' code from probe_sequence_code
+        # Get locations for this trial
+        
+        # by default, we reprise the prior coords
+        path_coords_probe = path_coords
+        
+        print(trials.thisN)
+        print(memory_type)
+        print(probe_type)
+        print(probe_validity)
+        
+        if probe_validity == "lure":
+            if probe_type == "continuous":
+                # TODO pick segment to swap
+                core.wait(0.1)
+            elif probe_type == "discrete":
+                # generate a lure location
+                lure_coords = round(random.uniform(-1,1), 1)
+                a = 1
+                while a:
+                    # check against memory set
+                    x_distance[:] = [abs(location[0] - lure_coords[0]) for location in path_coords]
+                    y_distance[:] = [abs(location[1] - lure_coords[1]) for location in path_coords]
+                    for i in x_distance:
+                        if x_distance[i] < 0.2 and y_distance[i] < 0.2:
+                            lure_coords = round(random.uniform(-1,1), 1)
+                            break
+                        else:
+                            print(i)
+                            print(x_distance[i])
+                            print(y_distance[i])
+                    a = 0
+                            
+                    
+        else: # probe_validity == target
+            if probe_type == "discrete":
+                lure_pos = round(random.uniform(1, path_length),0)
+                path_coords_probe = path_coords_probe[lure_pos]
+         
+        # Initialize path steps
+        segment = 0
+        
+        # set initial disc position
+        disc_position = path_coords_probe[segment]
+        disc_color = white
+        
+        # start pause timer
+        pause_timer = core.CountdownTimer(pause_duration)
+            
+        if probe_type == "continuous":
+            # set initial endpoint
+            path_end = path_coords_probe[segment + 1]
+        
+        
+        
+        # store start times for VWM_memory_probe
+        VWM_memory_probe.tStartRefresh = win.getFutureFlipTime(clock=globalClock)
+        VWM_memory_probe.tStart = globalClock.getTime(format='float')
+        VWM_memory_probe.status = STARTED
+        thisExp.addData('VWM_memory_probe.started', VWM_memory_probe.tStart)
+        VWM_memory_probe.maxDuration = None
+        # keep track of which components have finished
+        VWM_memory_probeComponents = VWM_memory_probe.components
+        for thisComponent in VWM_memory_probe.components:
+            thisComponent.tStart = None
+            thisComponent.tStop = None
+            thisComponent.tStartRefresh = None
+            thisComponent.tStopRefresh = None
+            if hasattr(thisComponent, 'status'):
+                thisComponent.status = NOT_STARTED
+        # reset timers
+        t = 0
+        _timeToFirstFrame = win.getFutureFlipTime(clock="now")
+        frameN = -1
+        
+        # --- Run Routine "VWM_memory_probe" ---
+        VWM_memory_probe.forceEnded = routineForceEnded = not continueRoutine
+        while continueRoutine:
+            # if trial has changed, end Routine now
+            if hasattr(thisTrial, 'status') and thisTrial.status == STOPPING:
+                continueRoutine = False
+            # get current time
+            t = routineTimer.getTime()
+            tThisFlip = win.getFutureFlipTime(clock=routineTimer)
+            tThisFlipGlobal = win.getFutureFlipTime(clock=None)
+            frameN = frameN + 1  # number of completed frames (so 0 is the first frame)
+            # update/draw components on each frame
+            
+            # *probe_fix* updates
+            
+            # if probe_fix is starting this frame...
+            if probe_fix.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
+                # keep track of start time/frame for later
+                probe_fix.frameNStart = frameN  # exact frame index
+                probe_fix.tStart = t  # local t and not account for scr refresh
+                probe_fix.tStartRefresh = tThisFlipGlobal  # on global time
+                win.timeOnFlip(probe_fix, 'tStartRefresh')  # time at next scr refresh
+                # add timestamp to datafile
+                thisExp.timestampOnFlip(win, 'probe_fix.started')
+                # update status
+                probe_fix.status = STARTED
+                probe_fix.setAutoDraw(True)
+            
+            # if probe_fix is active this frame...
+            if probe_fix.status == STARTED:
+                # update params
+                pass
+            
+            # *probe_disc* updates
+            
+            # if probe_disc is starting this frame...
+            if probe_disc.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
+                # keep track of start time/frame for later
+                probe_disc.frameNStart = frameN  # exact frame index
+                probe_disc.tStart = t  # local t and not account for scr refresh
+                probe_disc.tStartRefresh = tThisFlipGlobal  # on global time
+                win.timeOnFlip(probe_disc, 'tStartRefresh')  # time at next scr refresh
+                # add timestamp to datafile
+                thisExp.timestampOnFlip(win, 'probe_disc.started')
+                # update status
+                probe_disc.status = STARTED
+                probe_disc.setAutoDraw(True)
+            
+            # if probe_disc is active this frame...
+            if probe_disc.status == STARTED:
+                # update params
+                probe_disc.setFillColor(disc_color, log=False)
+                probe_disc.setPos(disc_position, log=False)
+                probe_disc.setLineColor(disc_color, log=False)
+            
+            # check for quit (typically the Esc key)
+            if defaultKeyboard.getKeys(keyList=["escape"]):
+                thisExp.status = FINISHED
+            if thisExp.status == FINISHED or endExpNow:
+                endExperiment(thisExp, win=win)
+                return
+            # pause experiment here if requested
+            if thisExp.status == PAUSED:
+                pauseExperiment(
+                    thisExp=thisExp, 
+                    win=win, 
+                    timers=[routineTimer, globalClock], 
+                    currentRoutine=VWM_memory_probe,
+                )
+                # skip the frame we paused on
+                continue
+            
+            # check if all components have finished
+            if not continueRoutine:  # a component has requested a forced-end of Routine
+                VWM_memory_probe.forceEnded = routineForceEnded = True
+                break
+            continueRoutine = False  # will revert to True if at least one component still running
+            for thisComponent in VWM_memory_probe.components:
+                if hasattr(thisComponent, "status") and thisComponent.status != FINISHED:
+                    continueRoutine = True
+                    break  # at least one component has not yet finished
+            
+            # refresh the screen
+            if continueRoutine:  # don't flip if this routine is over or we'll get a blank screen
+                win.flip()
+        
+        # --- Ending Routine "VWM_memory_probe" ---
+        for thisComponent in VWM_memory_probe.components:
+            if hasattr(thisComponent, "setAutoDraw"):
+                thisComponent.setAutoDraw(False)
+        # store stop times for VWM_memory_probe
+        VWM_memory_probe.tStop = globalClock.getTime(format='float')
+        VWM_memory_probe.tStopRefresh = tThisFlipGlobal
+        thisExp.addData('VWM_memory_probe.stopped', VWM_memory_probe.tStop)
+        # the Routine "VWM_memory_probe" was not non-slip safe, so reset the non-slip timer
         routineTimer.reset()
         # mark thisTrial as finished
         if hasattr(thisTrial, 'status'):
@@ -574,7 +880,7 @@ def run(expInfo, thisExp, win, globalClock=None, thisSession=None):
             trials.status = STARTED
         thisExp.nextEntry()
         
-    # completed 2.0 repeats of 'trials'
+    # completed 1.0 repeats of 'trials'
     trials.status = FINISHED
     
     if thisSession is not None:

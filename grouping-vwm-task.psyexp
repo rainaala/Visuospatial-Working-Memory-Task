@@ -1044,35 +1044,187 @@
       <CodeComponent name="memory_sequence_code" plugin="None">
         <Param val="import random&amp;#10;&amp;#10;random.seed = 1&amp;#10;&amp;#10;def get_random_path_coord( coords_to_avoid ):&amp;#10;    # Select random x and y values that are different from those in coords_to_avoid&amp;#10;    x = coords_to_avoid[0]&amp;#10;    while abs(x - coords_to_avoid[0]) &lt; 0.2:&amp;#10;        x = round(random.uniform(-1, 1), 1)&amp;#10;    y = coords_to_avoid[1]&amp;#10;    while abs(y - coords_to_avoid[1]) &lt; 0.2:&amp;#10;        y = round(random.uniform(-1, 1), 1)&amp;#10;    coord = (x,y)&amp;#10;    return coord" valType="extendedCode" updates="constant" name="Before Experiment"/>
         <Param val="" valType="extendedCode" updates="constant" name="Before JS Experiment"/>
-        <Param val="# Set path parameters&amp;#10;path_length = 5&amp;#10;&amp;#10;# Movement speed (adjust for smoothness)&amp;#10;stepSize = 0.005" valType="extendedCode" updates="constant" name="Begin Experiment"/>
+        <Param val="# Set path parameters&amp;#10;path_length = 5&amp;#10;pause_duration = 0.2 # 200 ms&amp;#10;retention_interval = 1.0 # 1000 ms&amp;#10;&amp;#10;# Movement speed (adjust for smoothness)&amp;#10;step_size = 0.01 # speeding up for debugging&amp;#10;#step_size = 0.005&amp;#10;&amp;#10;# colors &amp;#10;white = [1,1,1]&amp;#10;gray = [0,0,0]" valType="extendedCode" updates="constant" name="Begin Experiment"/>
         <Param val="" valType="extendedCode" updates="constant" name="Begin JS Experiment"/>
         <Param val="" valType="extendedCode" updates="constant" name="Begin JS Routine"/>
-        <Param val="# Get locations for this trial&amp;#10;&amp;#10;path_coords = []&amp;#10;## path coords is a list of (x,y) tuples&amp;#10;for segment in range(path_length):&amp;#10;    if segment == 0:&amp;#10;        segment_coord = (0,0)&amp;#10;    else:&amp;#10;        segment_coord = get_random_path_coord(path_coords[segment-1])&amp;#10;&amp;#10;    path_coords.append(segment_coord)&amp;#10;print(path_coords)&amp;#10;&amp;#10;# Initialize path steps&amp;#10;segment = 0&amp;#10;&amp;#10;if segment &lt; path_length:&amp;#10;    path_start = path_coords[segment]&amp;#10;    path_end = path_coors[segment + 1]&amp;#10;else:&amp;#10;    continueRoutine = False&amp;#10;&amp;#10;# Initial circle position&amp;#10;disc_position = path_start&amp;#10;" valType="extendedCode" updates="constant" name="Begin Routine"/>
+        <Param val="# Get locations for this trial&amp;#10;&amp;#10;path_coords = []&amp;#10;## path coords is a list of (x,y) tuples&amp;#10;for segment in range(path_length):&amp;#10;    if segment == 0:&amp;#10;        segment_coord = (0,0)&amp;#10;    else:&amp;#10;        segment_coord = get_random_path_coord(path_coords[segment-1])&amp;#10;&amp;#10;    path_coords.append(segment_coord)&amp;#10;#print(path_coords)&amp;#10;&amp;#10;# Initialize path steps&amp;#10;segment = 0&amp;#10;&amp;#10;# set initial disc position&amp;#10;disc_position = path_coords[segment]&amp;#10;disc_color = white&amp;#10;&amp;#10;# start pause timer&amp;#10;pause_timer = core.CountdownTimer(pause_duration)&amp;#10;    &amp;#10;# set initial endpoint&amp;#10;path_end = path_coords[segment + 1]&amp;#10;&amp;#10;&amp;#10;" valType="extendedCode" updates="constant" name="Begin Routine"/>
         <Param val="Py" valType="str" updates="None" name="Code Type"/>
-        <Param val="# Add disc movement here" valType="extendedCode" updates="constant" name="Each Frame"/>
+        <Param val="&amp;#10;# check if we're paused&amp;#10;while pause_timer.getTime() &gt; 0:&amp;#10;    continue # skip the rest of this&amp;#10;    &amp;#10;if segment &gt;= path_length - 1:&amp;#10;    continueRoutine = False  # reached last point&amp;#10;    disc_color = gray&amp;#10;else:&amp;#10;    # update path end and continue&amp;#10;    path_end = path_coords[segment + 1]&amp;#10;&amp;#10;# get euclidean distance&amp;#10;dx = path_end[0] - disc_position[0]&amp;#10;dy = path_end[1] - disc_position[1]&amp;#10;&amp;#10;distance = (dx**2 + dy**2) ** 0.5&amp;#10;&amp;#10;if distance &gt; step_size:&amp;#10;    # move a small step toward the target&amp;#10;    new_x = disc_position[0] + dx * ( step_size / distance )&amp;#10;    new_y = disc_position[1] + dy * ( step_size / distance )&amp;#10;    if memory_type == &quot;continuous&quot;:&amp;#10;        disc_color = white&amp;#10;    else:&amp;#10;        disc_color = gray&amp;#10;else:&amp;#10;    # we've reached the target, snap to position and update segment counter&amp;#10;    new_x = path_end[0]&amp;#10;    new_y = path_end[1]&amp;#10;    disc_color = white&amp;#10;    # start pause timer&amp;#10;    pause_timer = core.CountdownTimer(pause_duration)&amp;#10;    &amp;#10;    segment = segment + 1&amp;#10;    &amp;#10;    &amp;#10;&amp;#10;disc_position = (new_x, new_y)&amp;#10;" valType="extendedCode" updates="constant" name="Each Frame"/>
+        <Param val="" valType="extendedCode" updates="constant" name="Each JS Frame"/>
+        <Param val="" valType="extendedCode" updates="constant" name="End Experiment"/>
+        <Param val="" valType="extendedCode" updates="constant" name="End JS Experiment"/>
+        <Param val="" valType="extendedCode" updates="constant" name="End JS Routine"/>
+        <Param val="# pause for retention interval&amp;#10;core.wait(retention_interval)" valType="extendedCode" updates="constant" name="End Routine"/>
+        <Param val="False" valType="bool" updates="None" name="disabled"/>
+        <Param val="memory_sequence_code" valType="code" updates="None" name="name"/>
+      </CodeComponent>
+      <PolygonComponent name="mem_fix" plugin="None">
+        <Param val="center" valType="str" updates="constant" name="anchor"/>
+        <Param val="rgb" valType="str" updates="constant" name="colorSpace"/>
+        <Param val="1" valType="num" updates="constant" name="contrast"/>
+        <Param val="False" valType="bool" updates="None" name="disabled"/>
+        <Param val="False" valType="code" updates="constant" name="draggable"/>
+        <Param val="" valType="code" updates="None" name="durationEstim"/>
+        <Param val="white" valType="color" updates="constant" name="fillColor"/>
+        <Param val="linear" valType="str" updates="constant" name="interpolate"/>
+        <Param val="gray" valType="color" updates="constant" name="lineColor"/>
+        <Param val="1" valType="num" updates="constant" name="lineWidth"/>
+        <Param val="4" valType="int" updates="constant" name="nVertices"/>
+        <Param val="mem_fix" valType="code" updates="None" name="name"/>
+        <Param val="" valType="num" updates="constant" name="opacity"/>
+        <Param val="0" valType="num" updates="constant" name="ori"/>
+        <Param val="(0, 0)" valType="list" updates="constant" name="pos"/>
+        <Param val="True" valType="bool" updates="None" name="saveStartStop"/>
+        <Param val="cross" valType="str" updates="None" name="shape"/>
+        <Param val="(0.05, 0.05)" valType="list" updates="constant" name="size"/>
+        <Param val="" valType="code" updates="None" name="startEstim"/>
+        <Param val="time (s)" valType="str" updates="None" name="startType"/>
+        <Param val="0.0" valType="code" updates="None" name="startVal"/>
+        <Param val="duration (s)" valType="str" updates="None" name="stopType"/>
+        <Param val="" valType="code" updates="constant" name="stopVal"/>
+        <Param val="True" valType="bool" updates="None" name="syncScreenRefresh"/>
+        <Param val="from exp settings" valType="str" updates="None" name="units"/>
+        <Param val="" valType="code" updates="None" name="validator"/>
+        <Param val="" valType="list" updates="constant" name="vertices"/>
+      </PolygonComponent>
+      <PolygonComponent name="mem_disc" plugin="None">
+        <Param val="center" valType="str" updates="constant" name="anchor"/>
+        <Param val="rgb" valType="str" updates="constant" name="colorSpace"/>
+        <Param val="1" valType="num" updates="constant" name="contrast"/>
+        <Param val="False" valType="bool" updates="None" name="disabled"/>
+        <Param val="False" valType="code" updates="constant" name="draggable"/>
+        <Param val="" valType="code" updates="None" name="durationEstim"/>
+        <Param val="$disc_color" valType="color" updates="set every frame" name="fillColor"/>
+        <Param val="linear" valType="str" updates="constant" name="interpolate"/>
+        <Param val="$disc_color" valType="color" updates="set every frame" name="lineColor"/>
+        <Param val="1" valType="num" updates="constant" name="lineWidth"/>
+        <Param val="4" valType="int" updates="constant" name="nVertices"/>
+        <Param val="mem_disc" valType="code" updates="None" name="name"/>
+        <Param val="" valType="num" updates="constant" name="opacity"/>
+        <Param val="0" valType="num" updates="constant" name="ori"/>
+        <Param val="disc_position" valType="list" updates="set every frame" name="pos"/>
+        <Param val="True" valType="bool" updates="None" name="saveStartStop"/>
+        <Param val="circle" valType="str" updates="None" name="shape"/>
+        <Param val="(0.1,0.1)" valType="list" updates="constant" name="size"/>
+        <Param val="" valType="code" updates="None" name="startEstim"/>
+        <Param val="time (s)" valType="str" updates="None" name="startType"/>
+        <Param val="0.0" valType="code" updates="None" name="startVal"/>
+        <Param val="duration (s)" valType="str" updates="None" name="stopType"/>
+        <Param val="" valType="code" updates="constant" name="stopVal"/>
+        <Param val="True" valType="bool" updates="None" name="syncScreenRefresh"/>
+        <Param val="from exp settings" valType="str" updates="None" name="units"/>
+        <Param val="" valType="code" updates="None" name="validator"/>
+        <Param val="" valType="list" updates="constant" name="vertices"/>
+      </PolygonComponent>
+    </Routine>
+    <Routine name="VWM_memory_probe">
+      <RoutineSettingsComponent name="VWM_memory_probe" plugin="None">
+        <Param val="none" valType="str" updates="None" name="backgroundFit"/>
+        <Param val="" valType="str" updates="None" name="backgroundImg"/>
+        <Param val="$[0,0,0]" valType="color" updates="None" name="color"/>
+        <Param val="rgb" valType="str" updates="None" name="colorSpace"/>
+        <Param val="" valType="str" updates="constant" name="desc"/>
+        <Param val="False" valType="bool" updates="None" name="disabled"/>
+        <Param val="" valType="code" updates="None" name="durationEstim"/>
+        <Param val="False" valType="code" updates="None" name="forceNonSlip"/>
+        <Param val="VWM_memory_probe" valType="code" updates="None" name="name"/>
+        <Param val="True" valType="bool" updates="None" name="saveStartStop"/>
+        <Param val="" valType="code" updates="constant" name="skipIf"/>
+        <Param val="duration (s)" valType="str" updates="None" name="stopType"/>
+        <Param val="" valType="code" updates="constant" name="stopVal"/>
+        <Param val="False" valType="bool" updates="None" name="useWindowParams"/>
+      </RoutineSettingsComponent>
+      <CodeComponent name="probe_sequence_code" plugin="None">
+        <Param val="" valType="extendedCode" updates="constant" name="Before Experiment"/>
+        <Param val="x = round(random.uniform(-1, 1), 1)" valType="extendedCode" updates="constant" name="Before JS Experiment"/>
+        <Param val="" valType="extendedCode" updates="constant" name="Begin Experiment"/>
+        <Param val="" valType="extendedCode" updates="constant" name="Begin JS Experiment"/>
+        <Param val="" valType="extendedCode" updates="constant" name="Begin JS Routine"/>
+        <Param val="# Get locations for this trial&amp;#10;&amp;#10;# by default, we reprise the prior coords&amp;#10;path_coords_probe = path_coords&amp;#10;&amp;#10;print(trials.thisN)&amp;#10;print(memory_type)&amp;#10;print(probe_type)&amp;#10;print(probe_validity)&amp;#10;&amp;#10;if probe_validity == &quot;lure&quot;:&amp;#10;    if probe_type == &quot;continuous&quot;:&amp;#10;        # TODO pick segment to swap&amp;#10;        core.wait(0.1)&amp;#10;    elif probe_type == &quot;discrete&quot;:&amp;#10;        # generate a lure location&amp;#10;        lure_coords = round(random.uniform(-1,1), 1)&amp;#10;        a = 1&amp;#10;        while a:&amp;#10;            # check against memory set&amp;#10;            x_distance[:] = [abs(location[0] - lure_coords[0]) for location in path_coords]&amp;#10;            y_distance[:] = [abs(location[1] - lure_coords[1]) for location in path_coords]&amp;#10;            for i in x_distance:&amp;#10;                if x_distance[i] &lt; 0.2 and y_distance[i] &lt; 0.2:&amp;#10;                    lure_coords = round(random.uniform(-1,1), 1)&amp;#10;                    break&amp;#10;                else:&amp;#10;                    print(i)&amp;#10;                    print(x_distance[i])&amp;#10;                    print(y_distance[i])&amp;#10;            a = 0&amp;#10;                    &amp;#10;            &amp;#10;else: # probe_validity == target&amp;#10;    if probe_type == &quot;discrete&quot;:&amp;#10;        lure_pos = round(random.uniform(1, path_length),0)&amp;#10;        path_coords_probe = path_coords_probe[lure_pos]&amp;#10; &amp;#10;# Initialize path steps&amp;#10;segment = 0&amp;#10;&amp;#10;# set initial disc position&amp;#10;disc_position = path_coords_probe[segment]&amp;#10;disc_color = white&amp;#10;&amp;#10;# start pause timer&amp;#10;pause_timer = core.CountdownTimer(pause_duration)&amp;#10;    &amp;#10;if probe_type == &quot;continuous&quot;:&amp;#10;    # set initial endpoint&amp;#10;    path_end = path_coords_probe[segment + 1]&amp;#10;&amp;#10;&amp;#10;" valType="extendedCode" updates="constant" name="Begin Routine"/>
+        <Param val="Py" valType="str" updates="None" name="Code Type"/>
+        <Param val="" valType="extendedCode" updates="constant" name="Each Frame"/>
         <Param val="" valType="extendedCode" updates="constant" name="Each JS Frame"/>
         <Param val="" valType="extendedCode" updates="constant" name="End Experiment"/>
         <Param val="" valType="extendedCode" updates="constant" name="End JS Experiment"/>
         <Param val="" valType="extendedCode" updates="constant" name="End JS Routine"/>
         <Param val="" valType="extendedCode" updates="constant" name="End Routine"/>
         <Param val="False" valType="bool" updates="None" name="disabled"/>
-        <Param val="memory_sequence_code" valType="code" updates="None" name="name"/>
+        <Param val="probe_sequence_code" valType="code" updates="None" name="name"/>
       </CodeComponent>
+      <PolygonComponent name="probe_fix" plugin="None">
+        <Param val="center" valType="str" updates="constant" name="anchor"/>
+        <Param val="rgb" valType="str" updates="constant" name="colorSpace"/>
+        <Param val="1" valType="num" updates="constant" name="contrast"/>
+        <Param val="False" valType="bool" updates="None" name="disabled"/>
+        <Param val="False" valType="code" updates="constant" name="draggable"/>
+        <Param val="" valType="code" updates="None" name="durationEstim"/>
+        <Param val="white" valType="color" updates="constant" name="fillColor"/>
+        <Param val="linear" valType="str" updates="constant" name="interpolate"/>
+        <Param val="gray" valType="color" updates="constant" name="lineColor"/>
+        <Param val="1" valType="num" updates="constant" name="lineWidth"/>
+        <Param val="4" valType="int" updates="constant" name="nVertices"/>
+        <Param val="probe_fix" valType="code" updates="None" name="name"/>
+        <Param val="" valType="num" updates="constant" name="opacity"/>
+        <Param val="0" valType="num" updates="constant" name="ori"/>
+        <Param val="(0, 0)" valType="list" updates="constant" name="pos"/>
+        <Param val="True" valType="bool" updates="None" name="saveStartStop"/>
+        <Param val="cross" valType="str" updates="None" name="shape"/>
+        <Param val="(0.05, 0.05)" valType="list" updates="constant" name="size"/>
+        <Param val="" valType="code" updates="None" name="startEstim"/>
+        <Param val="time (s)" valType="str" updates="None" name="startType"/>
+        <Param val="0.0" valType="code" updates="None" name="startVal"/>
+        <Param val="duration (s)" valType="str" updates="None" name="stopType"/>
+        <Param val="" valType="code" updates="constant" name="stopVal"/>
+        <Param val="True" valType="bool" updates="None" name="syncScreenRefresh"/>
+        <Param val="from exp settings" valType="str" updates="None" name="units"/>
+        <Param val="" valType="code" updates="None" name="validator"/>
+        <Param val="" valType="list" updates="constant" name="vertices"/>
+      </PolygonComponent>
+      <PolygonComponent name="probe_disc" plugin="None">
+        <Param val="center" valType="str" updates="constant" name="anchor"/>
+        <Param val="rgb" valType="str" updates="constant" name="colorSpace"/>
+        <Param val="1" valType="num" updates="constant" name="contrast"/>
+        <Param val="False" valType="bool" updates="None" name="disabled"/>
+        <Param val="False" valType="code" updates="constant" name="draggable"/>
+        <Param val="" valType="code" updates="None" name="durationEstim"/>
+        <Param val="$disc_color" valType="color" updates="set every frame" name="fillColor"/>
+        <Param val="linear" valType="str" updates="constant" name="interpolate"/>
+        <Param val="$disc_color" valType="color" updates="set every frame" name="lineColor"/>
+        <Param val="1" valType="num" updates="constant" name="lineWidth"/>
+        <Param val="4" valType="int" updates="constant" name="nVertices"/>
+        <Param val="probe_disc" valType="code" updates="None" name="name"/>
+        <Param val="" valType="num" updates="constant" name="opacity"/>
+        <Param val="0" valType="num" updates="constant" name="ori"/>
+        <Param val="disc_position" valType="list" updates="set every frame" name="pos"/>
+        <Param val="True" valType="bool" updates="None" name="saveStartStop"/>
+        <Param val="circle" valType="str" updates="None" name="shape"/>
+        <Param val="(0.1,0.1)" valType="list" updates="constant" name="size"/>
+        <Param val="" valType="code" updates="None" name="startEstim"/>
+        <Param val="time (s)" valType="str" updates="None" name="startType"/>
+        <Param val="0.0" valType="code" updates="None" name="startVal"/>
+        <Param val="duration (s)" valType="str" updates="None" name="stopType"/>
+        <Param val="" valType="code" updates="constant" name="stopVal"/>
+        <Param val="True" valType="bool" updates="None" name="syncScreenRefresh"/>
+        <Param val="from exp settings" valType="str" updates="None" name="units"/>
+        <Param val="" valType="code" updates="None" name="validator"/>
+        <Param val="" valType="list" updates="constant" name="vertices"/>
+      </PolygonComponent>
     </Routine>
   </Routines>
   <Flow>
     <LoopInitiator loopType="TrialHandler" name="trials">
       <Param name="Selected rows" updates="None" val="" valType="str"/>
-      <Param name="conditions" updates="None" val="[OrderedDict([('memory_type', 'continuous'), ('probe_type', 'discrete')]), OrderedDict([('memory_type', 'continuous'), ('probe_type', 'continuous')]), OrderedDict([('memory_type', 'discrete'), ('probe_type', 'discrete')]), OrderedDict([('memory_type', 'discrete'), ('probe_type', 'continuous')])]" valType="str"/>
-      <Param name="conditionsFile" updates="None" val="experiment_control_files/trial-types_aln_2025-12-01.csv" valType="file"/>
+      <Param name="conditions" updates="None" val="[OrderedDict([('memory_type', 'continuous'), ('probe_type', 'discrete'), ('probe_validity', 'target')]), OrderedDict([('memory_type', 'continuous'), ('probe_type', 'continuous'), ('probe_validity', 'target')]), OrderedDict([('memory_type', 'discrete'), ('probe_type', 'discrete'), ('probe_validity', 'target')]), OrderedDict([('memory_type', 'discrete'), ('probe_type', 'continuous'), ('probe_validity', 'target')]), OrderedDict([('memory_type', 'continuous'), ('probe_type', 'discrete'), ('probe_validity', 'lure')]), OrderedDict([('memory_type', 'continuous'), ('probe_type', 'continuous'), ('probe_validity', 'lure')]), OrderedDict([('memory_type', 'discrete'), ('probe_type', 'discrete'), ('probe_validity', 'lure')]), OrderedDict([('memory_type', 'discrete'), ('probe_type', 'continuous'), ('probe_validity', 'lure')])]" valType="str"/>
+      <Param name="conditionsFile" updates="None" val="experiment_control_files/trial-types_aln_2025-12-07.csv" valType="file"/>
       <Param name="endPoints" updates="None" val="[0, 1]" valType="num"/>
       <Param name="isTrials" updates="None" val="True" valType="bool"/>
       <Param name="loopType" updates="None" val="random" valType="str"/>
-      <Param name="nReps" updates="None" val="2" valType="num"/>
+      <Param name="nReps" updates="None" val="1" valType="num"/>
       <Param name="name" updates="None" val="trials" valType="code"/>
       <Param name="random seed" updates="None" val="" valType="code"/>
     </LoopInitiator>
     <Routine name="VWM_memory_display"/>
+    <Routine name="VWM_memory_probe"/>
     <LoopTerminator name="trials"/>
   </Flow>
 </PsychoPy2experiment>

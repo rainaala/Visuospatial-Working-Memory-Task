@@ -1,0 +1,9 @@
+memory_type,probe_type,probe_validity
+continuous,discrete,target
+continuous,continuous,target
+discrete,discrete,target
+discrete,continuous,target
+continuous,discrete,lure
+continuous,continuous,lure
+discrete,discrete,lure
+discrete,continuous,lure
