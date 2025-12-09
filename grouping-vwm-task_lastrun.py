@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 This experiment was created using PsychoPy3 Experiment Builder (v2025.1.1),
-    on Tue Dec  9 09:47:40 2025
+    on Tue Dec  9 18:17:38 2025
 If you publish work using this script the most relevant publication is:
 
     Peirce J, Gray JR, Simpson S, MacAskill M, Höchenberger R, Sogo H, Kastman E, Lindeløv JK. (2019) 
@@ -391,12 +391,12 @@ def run(expInfo, thisExp, win, globalClock=None, thisSession=None):
     # Run 'Begin Experiment' code from memory_sequence_code
     # Set path parameters
     path_length = 5
-    pause_duration = 0.2 # 200 ms
+    pause_duration = 0.3 # in seconds
     retention_interval = 3.0 # 1000 ms
     
     # Movement speed (adjust for smoothness)
-    step_size = 0.01 # speeding up for debugging
-    #step_size = 0.005
+    #step_size = 0.01 # speeding up for debugging
+    step_size = 0.005
     
     # colors 
     white = [1,1,1]
@@ -504,7 +504,7 @@ def run(expInfo, thisExp, win, globalClock=None, thisSession=None):
         originPath=-1, 
         trialList=data.importConditions(
         'experiment_control_files/trial-types_aln_2025-12-08.csv', 
-        selection='5'
+        selection='0'
     )
     , 
         seed=None, 
@@ -553,7 +553,7 @@ def run(expInfo, thisExp, win, globalClock=None, thisSession=None):
                 segment_coord = get_random_path_coord(path_coords[segment-1])
         
             path_coords.append(segment_coord)
-        #print(path_coords)
+        print(path_coords)
         
         # Initialize path steps
         segment = 0
@@ -851,24 +851,32 @@ def run(expInfo, thisExp, win, globalClock=None, thisSession=None):
         # Get locations for this trial
         
         # by default, we reprise the prior coords
-        path_coords_probe = path_coords
+        path_coords_probe = path_coords.copy() # PYTHON VARIABLES ARE DUMB
+        probe_length = path_length # Int, don't need to copy.
         
         print(trials.thisN)
         print(memory_type)
         print(probe_type)
         print(probe_validity)
+        #print(path_coords)
         
         if probe_validity == "lure":
             if probe_type == "sequence":
                 print('generating a sequence lure')
                 # pick a position
-                lure_pos = int(round(random.uniform(1, path_length),0))
+                lure_pos = int(round(random.uniform(1, path_length - 1),0))
+                print(probe_length)
                 # swap with prior 
                 path_coords_probe[lure_pos] = path_coords[lure_pos - 1]
+        #        print('path_cords_probe first swap')
+        #        print(path_coords_probe)
                 path_coords_probe[lure_pos - 1] = path_coords[lure_pos]
+        #        print('path_coords_probe second swap')
+        #        print(path_coords_probe)
         
             elif probe_type == "single":
                 print('generating a single lure')
+                probe_length = 1
                 # generate a lure location
                 x = round(max_eccen * random.uniform(-1, 1), 1)
                 y = round(max_eccen * random.uniform(-1, 1), 1)
@@ -885,10 +893,10 @@ def run(expInfo, thisExp, win, globalClock=None, thisSession=None):
                             y = round(max_eccen * random.uniform(-1, 1), 1)
                             lure_coords = (x,y)
                             break
-                        else:
-                            print(loc)
-                            print(x_distance)
-                            print(y_distance)
+        #                else:
+        #                    print(loc)
+        #                    print(x_distance)
+        #                    print(y_distance)
                         a = 0
                 path_coords_probe = [lure_coords]
                     
@@ -897,8 +905,9 @@ def run(expInfo, thisExp, win, globalClock=None, thisSession=None):
                 print('generating a single target')
                 probe_pos = int(round(random.uniform(1, path_length-1),0))
                 path_coords_probe = [path_coords_probe[probe_pos]]
-            else: # probe_type == "discrete"
-                return
+                probe_length = 1
+        #    else: # probe_type == "discrete"
+        #        return
          
         print(path_coords)
         print(path_coords_probe)
@@ -908,7 +917,7 @@ def run(expInfo, thisExp, win, globalClock=None, thisSession=None):
         
         # set initial disc position
         disc_position = path_coords_probe[segment]
-        print(disc_position)
+        #print(disc_position)
         disc_color = white
         
         # start pause timer
@@ -916,12 +925,13 @@ def run(expInfo, thisExp, win, globalClock=None, thisSession=None):
             
         if probe_type == "sequence":
             # set initial endpoint
+            print('got here 1')
             path_end = path_coords_probe[segment + 1]
         
         if probe_type == "sequence":
-            response_string = "F same                different J"
+            response_string = "F same                           J different"
         else:
-            response_string = "F old                       new J"
+            response_string = "F old                                  J new"
         # store start times for VWM_memory_probe
         VWM_memory_probe.tStartRefresh = win.getFutureFlipTime(clock=globalClock)
         VWM_memory_probe.tStart = globalClock.getTime(format='float')
@@ -955,17 +965,8 @@ def run(expInfo, thisExp, win, globalClock=None, thisSession=None):
             frameN = frameN + 1  # number of completed frames (so 0 is the first frame)
             # update/draw components on each frame
             # Run 'Each Frame' code from probe_sequence_code
-            
-            
-            if segment >= path_length - 1:
-                disc_color = gray
-                continueRoutine = False  # reached last point    
-            elif probe_type == "sequence":
-                # update path end and continue
+            if pause_timer.getTime() <= 0 and probe_type == "sequence" and segment < probe_length - 1:
                 path_end = path_coords[segment + 1]
-            
-            
-            if pause_timer.getTime() <= 0 and probe_type == "sequence" and segment < path_length - 1:
                 # get euclidean distance
                 dx = path_end[0] - disc_position[0]
                 dy = path_end[1] - disc_position[1]
@@ -988,9 +989,9 @@ def run(expInfo, thisExp, win, globalClock=None, thisSession=None):
                     pause_timer = core.CountdownTimer(pause_duration)    
                     segment = segment + 1
                 disc_position = (new_x, new_y)
-            elif pause_timer.getTime() <= 0:
+            elif segment >= probe_length - 1 and pause_timer.getTime() <= 0:
                 disc_color = gray
-                continueRoutine = False
+                continueRoutine = False  # reached last point
                 
             
             
