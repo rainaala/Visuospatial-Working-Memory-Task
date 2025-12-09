@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 This experiment was created using PsychoPy3 Experiment Builder (v2025.1.1),
-    on Tue Dec  9 09:47:40 2025
+    on Tue Dec  9 09:19:48 2025
 If you publish work using this script the most relevant publication is:
 
     Peirce J, Gray JR, Simpson S, MacAskill M, Höchenberger R, Sogo H, Kastman E, Lindeløv JK. (2019) 
@@ -149,7 +149,7 @@ def setupData(expInfo, dataDir=None):
     thisExp = data.ExperimentHandler(
         name=expName, version=expVersion,
         extraInfo=expInfo, runtimeInfo=None,
-        originPath='/Users/anoyce/Documents/1_Research/perceptual-organization/vwm-version_raina-alam/grouping-vwm-task_lastrun.py',
+        originPath='/Users/anoyce/Documents/1_Research/perceptual-organization/vwm-version_raina-alam/grouping-vwm-task.py',
         savePickle=True, saveWideText=True,
         dataFileName=dataDir + os.sep + filename, sortColumns='time'
     )
@@ -504,7 +504,7 @@ def run(expInfo, thisExp, win, globalClock=None, thisSession=None):
         originPath=-1, 
         trialList=data.importConditions(
         'experiment_control_files/trial-types_aln_2025-12-08.csv', 
-        selection='5'
+        selection='2'
     )
     , 
         seed=None, 
@@ -561,7 +561,6 @@ def run(expInfo, thisExp, win, globalClock=None, thisSession=None):
         # set initial disc position
         disc_position = path_coords[segment]
         disc_color = white
-        path_end = path_coords[segment + 1]
         
         # start pause timer
         pause_timer = core.CountdownTimer(pause_duration)
@@ -603,13 +602,21 @@ def run(expInfo, thisExp, win, globalClock=None, thisSession=None):
             # update/draw components on each frame
             # Run 'Each Frame' code from memory_sequence_code
             
-            if pause_timer.getTime() <= 0 and segment < path_length - 1:
-                path_end = path_coords[segment + 1]
-                # get euclidean distance
-                dx = path_end[0] - disc_position[0]
-                dy = path_end[1] - disc_position[1]
             
-                distance = (dx**2 + dy**2) ** 0.5
+            if segment >= path_length - 1:
+                disc_color = gray
+                continueRoutine = False  # reached last point
+                
+            else:
+                # update path end and continue
+                path_end = path_coords[segment + 1]
+            
+            # get euclidean distance
+            dx = path_end[0] - disc_position[0]
+            dy = path_end[1] - disc_position[1]
+            
+            distance = (dx**2 + dy**2) ** 0.5
+            if pause_timer.getTime() <= 0:
                 if distance > step_size:
                     # move a small step toward the target
                     new_x = disc_position[0] + dx * ( step_size / distance )
@@ -625,11 +632,8 @@ def run(expInfo, thisExp, win, globalClock=None, thisSession=None):
                     disc_color = white
                     # start pause timer
                     pause_timer = core.CountdownTimer(pause_duration)    
-                    segment = segment + 1        
-                disc_position = (new_x, new_y)    
-            elif segment >= path_length - 1 and pause_timer.getTime() <= 0:
-                disc_color = gray
-                continueRoutine = False  # reached last point
+                    segment = segment + 1
+                disc_position = (new_x, new_y)
             
             
             
@@ -866,7 +870,7 @@ def run(expInfo, thisExp, win, globalClock=None, thisSession=None):
                 # swap with prior 
                 path_coords_probe[lure_pos] = path_coords[lure_pos - 1]
                 path_coords_probe[lure_pos - 1] = path_coords[lure_pos]
-        
+                core.wait(0.1)
             elif probe_type == "single":
                 print('generating a single lure')
                 # generate a lure location
@@ -876,6 +880,8 @@ def run(expInfo, thisExp, win, globalClock=None, thisSession=None):
                 a = 1
                 while a:
                     # check against memory set
+                    print(path_coords)
+                    print(lure_coords)
                     i = 0
                     for loc in path_coords:
                         x_distance = abs(loc[0] - lure_coords[0])
@@ -886,23 +892,21 @@ def run(expInfo, thisExp, win, globalClock=None, thisSession=None):
                             lure_coords = (x,y)
                             break
                         else:
-                            print(loc)
+                            print(i)
                             print(x_distance)
                             print(y_distance)
-                        a = 0
-                path_coords_probe = [lure_coords]
+                        a = 0                   
                     
         else: # probe_validity == target
             if probe_type == "single":
                 print('generating a single target')
                 probe_pos = int(round(random.uniform(1, path_length-1),0))
+                print(probe_pos)
+                print(path_coords_probe)
                 path_coords_probe = [path_coords_probe[probe_pos]]
             else: # probe_type == "discrete"
-                return
+                print(path_coords_probe)
          
-        print(path_coords)
-        print(path_coords_probe)
-        
         # Initialize path steps
         segment = 0
         
@@ -922,6 +926,8 @@ def run(expInfo, thisExp, win, globalClock=None, thisSession=None):
             response_string = "F same                different J"
         else:
             response_string = "F old                       new J"
+        
+        
         # store start times for VWM_memory_probe
         VWM_memory_probe.tStartRefresh = win.getFutureFlipTime(clock=globalClock)
         VWM_memory_probe.tStart = globalClock.getTime(format='float')
@@ -955,45 +961,49 @@ def run(expInfo, thisExp, win, globalClock=None, thisSession=None):
             frameN = frameN + 1  # number of completed frames (so 0 is the first frame)
             # update/draw components on each frame
             # Run 'Each Frame' code from probe_sequence_code
-            
-            
-            if segment >= path_length - 1:
-                disc_color = gray
-                continueRoutine = False  # reached last point    
-            elif probe_type == "sequence":
-                # update path end and continue
-                path_end = path_coords[segment + 1]
-            
-            
-            if pause_timer.getTime() <= 0 and probe_type == "sequence" and segment < path_length - 1:
-                # get euclidean distance
-                dx = path_end[0] - disc_position[0]
-                dy = path_end[1] - disc_position[1]
-            
-                distance = (dx**2 + dy**2) ** 0.5
-                if distance > step_size:
-                    # move a small step toward the target
-                    new_x = disc_position[0] + dx * ( step_size / distance )
-                    new_y = disc_position[1] + dy * ( step_size / distance )
-                    if memory_type == "continuous":
-                        disc_color = white
-                    else:
-                        disc_color = gray
-                else:
-                    # we've reached the target, snap to position and update segment counter
-                    new_x = path_end[0]
-                    new_y = path_end[1]
-                    disc_color = white
-                    # start pause timer
-                    pause_timer = core.CountdownTimer(pause_duration)    
-                    segment = segment + 1
-                disc_position = (new_x, new_y)
-            elif pause_timer.getTime() <= 0:
-                disc_color = gray
-                continueRoutine = False
-                
-            
-            
+            #
+            ## check if we're paused
+            #while pause_timer.getTime() > 0:
+            #    disc_color = white
+            #    print(disc_position)
+            #    continue # skip the rest of this
+            #    
+            #if probe_type == "single":
+            #    continueRoutine = False
+            #    disc_color = gray
+            #else:
+            #    # get euclidean distance
+            #    dx = path_end[0] - disc_position[0]
+            #    dy = path_end[1] - disc_position[1]
+            #
+            #    distance = (dx**2 + dy**2) ** 0.5
+            #
+            #    if distance > step_size:
+            #        # move a small step toward the target
+            #        new_x = disc_position[0] + dx * ( step_size / distance )
+            #        new_y = disc_position[1] + dy * ( step_size / distance )
+            #        if memory_type == "continuous":
+            #            disc_color = white
+            #        else:
+            #            disc_color = gray
+            #    else:
+            #        # we've reached the target, snap to position and update segment counter
+            #        new_x = path_end[0]
+            #        new_y = path_end[1]
+            #        
+            #        disc_color = white
+            #        # start pause timer
+            #        pause_timer = core.CountdownTimer(pause_duration)
+            #        
+            #        segment = segment + 1
+            #        if segment >= path_length - 1:
+            #            continueRoutine = False  # reached last point
+            #            disc_color = gray
+            #        else:
+            #            path_end = path_coords_probe[segment + 1]
+            #    
+            #disc_position = (new_x, new_y)
+            #
             
             # *probe_disc* updates
             
