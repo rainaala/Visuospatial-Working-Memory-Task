@@ -99,7 +99,7 @@
         <Param val="False" valType="bool" updates="None" name="useWindowParams"/>
       </RoutineSettingsComponent>
       <CodeComponent name="memory_sequence_code" plugin="None">
-        <Param val="import random&amp;#10;&amp;#10;random.seed = 1&amp;#10;&amp;#10;max_eccen = 0.5&amp;#10;&amp;#10;def get_random_path_coord( coords_to_avoid ):&amp;#10;    # Select random x and y values that are different from those in coords_to_avoid&amp;#10;    x = coords_to_avoid[0]&amp;#10;    while abs(x - coords_to_avoid[0]) &lt; 0.2:&amp;#10;        x = round(max_eccen * random.uniform(-1, 1), 1)&amp;#10;    y = coords_to_avoid[1]&amp;#10;    while abs(y - coords_to_avoid[1]) &lt; 0.2:&amp;#10;        y = round(max_eccen * random.uniform(-1, 1), 1)&amp;#10;    coord = (x,y)&amp;#10;    return coord" valType="extendedCode" updates="constant" name="Before Experiment"/>
+        <Param val="import random&amp;#10;&amp;#10;random.seed = 1&amp;#10;&amp;#10;max_eccen = 0.4&amp;#10;&amp;#10;def get_random_path_coord( coords_to_avoid ):&amp;#10;    # Select random x and y values that are different from those in coords_to_avoid&amp;#10;    x = coords_to_avoid[0]&amp;#10;    while abs(x - coords_to_avoid[0]) &lt; 0.2:&amp;#10;        x = round(max_eccen * random.uniform(-1, 1), 1)&amp;#10;    y = coords_to_avoid[1]&amp;#10;    while abs(y - coords_to_avoid[1]) &lt; 0.2:&amp;#10;        y = round(max_eccen * random.uniform(-1, 1), 1)&amp;#10;    coord = (x,y)&amp;#10;    return coord" valType="extendedCode" updates="constant" name="Before Experiment"/>
         <Param val="" valType="extendedCode" updates="constant" name="Before JS Experiment"/>
         <Param val="# Set path parameters&amp;#10;path_length = 5&amp;#10;pause_duration = 0.3 # in seconds&amp;#10;retention_interval = 3.0 # 1000 ms&amp;#10;&amp;#10;# Movement speed (adjust for smoothness)&amp;#10;#step_size = 0.01 # speeding up for debugging&amp;#10;step_size = 0.005&amp;#10;&amp;#10;# colors &amp;#10;white = [1,1,1]&amp;#10;gray = [0,0,0]" valType="extendedCode" updates="constant" name="Begin Experiment"/>
         <Param val="" valType="extendedCode" updates="constant" name="Begin JS Experiment"/>
@@ -594,7 +594,7 @@
       <Param name="endPoints" updates="None" val="[0, 1]" valType="num"/>
       <Param name="isTrials" updates="None" val="True" valType="bool"/>
       <Param name="loopType" updates="None" val="fullRandom" valType="str"/>
-      <Param name="nReps" updates="None" val="1" valType="num"/>
+      <Param name="nReps" updates="None" val="10" valType="num"/>
       <Param name="name" updates="None" val="trials_single_probe" valType="code"/>
       <Param name="random seed" updates="None" val="" valType="code"/>
     </LoopInitiator>
@@ -606,15 +606,15 @@
     <LoopTerminator name="trials_single_probe"/>
     <Routine name="sequence_probe_instructions"/>
     <Routine name="ITI"/>
-    <LoopInitiator loopType="TrialHandler" name="trials">
+    <LoopInitiator loopType="TrialHandler" name="trials_sequence_probe">
       <Param name="Selected rows" updates="None" val="" valType="str"/>
-      <Param name="conditions" updates="None" val="None" valType="str"/>
-      <Param name="conditionsFile" updates="None" val="" valType="file"/>
+      <Param name="conditions" updates="None" val="[OrderedDict([('memory_type', 'continuous'), ('probe_type', 'sequence'), ('probe_validity', 'target')]), OrderedDict([('memory_type', 'discrete'), ('probe_type', 'sequence'), ('probe_validity', 'target')]), OrderedDict([('memory_type', 'continuous'), ('probe_type', 'sequence'), ('probe_validity', 'lure')]), OrderedDict([('memory_type', 'discrete'), ('probe_type', 'sequence'), ('probe_validity', 'lure')])]" valType="str"/>
+      <Param name="conditionsFile" updates="None" val="experiment_control_files/trial-types_sequence-probe_2025-12-09.csv" valType="file"/>
       <Param name="endPoints" updates="None" val="[0, 1]" valType="num"/>
       <Param name="isTrials" updates="None" val="True" valType="bool"/>
       <Param name="loopType" updates="None" val="fullRandom" valType="str"/>
-      <Param name="nReps" updates="None" val="1" valType="num"/>
-      <Param name="name" updates="None" val="trials" valType="code"/>
+      <Param name="nReps" updates="None" val="10" valType="num"/>
+      <Param name="name" updates="None" val="trials_sequence_probe" valType="code"/>
       <Param name="random seed" updates="None" val="" valType="code"/>
     </LoopInitiator>
     <Routine name="VWM_memory_display"/>
@@ -622,6 +622,6 @@
     <Routine name="VWM_memory_probe"/>
     <Routine name="VWM_response"/>
     <Routine name="ITI"/>
-    <LoopTerminator name="trials"/>
+    <LoopTerminator name="trials_sequence_probe"/>
   </Flow>
 </PsychoPy2experiment>

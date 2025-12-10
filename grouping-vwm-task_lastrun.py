@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 This experiment was created using PsychoPy3 Experiment Builder (v2025.1.1),
-    on Tue Dec  9 19:01:24 2025
+    on Tue Dec  9 19:26:22 2025
 If you publish work using this script the most relevant publication is:
 
     Peirce J, Gray JR, Simpson S, MacAskill M, Höchenberger R, Sogo H, Kastman E, Lindeløv JK. (2019) 
@@ -910,7 +910,7 @@ def run(expInfo, thisExp, win, globalClock=None, thisSession=None):
     # set up handler to look after randomisation of conditions etc
     trials_single_probe = data.TrialHandler2(
         name='trials_single_probe',
-        nReps=1.0, 
+        nReps=10.0, 
         method='fullRandom', 
         extraInfo=expInfo, 
         originPath=-1, 
@@ -1836,7 +1836,7 @@ def run(expInfo, thisExp, win, globalClock=None, thisSession=None):
             trials_single_probe.status = STARTED
         thisExp.nextEntry()
         
-    # completed 1.0 repeats of 'trials_single_probe'
+    # completed 10.0 repeats of 'trials_single_probe'
     trials_single_probe.status = FINISHED
     
     if thisSession is not None:
@@ -2110,38 +2110,38 @@ def run(expInfo, thisExp, win, globalClock=None, thisSession=None):
     thisExp.nextEntry()
     
     # set up handler to look after randomisation of conditions etc
-    trials = data.TrialHandler2(
-        name='trials',
-        nReps=1.0, 
+    trials_sequence_probe = data.TrialHandler2(
+        name='trials_sequence_probe',
+        nReps=10.0, 
         method='fullRandom', 
         extraInfo=expInfo, 
         originPath=-1, 
-        trialList=[None], 
+        trialList=data.importConditions('experiment_control_files/trial-types_sequence-probe_2025-12-09.csv'), 
         seed=None, 
     )
-    thisExp.addLoop(trials)  # add the loop to the experiment
-    thisTrial = trials.trialList[0]  # so we can initialise stimuli with some values
-    # abbreviate parameter names if possible (e.g. rgb = thisTrial.rgb)
-    if thisTrial != None:
-        for paramName in thisTrial:
-            globals()[paramName] = thisTrial[paramName]
+    thisExp.addLoop(trials_sequence_probe)  # add the loop to the experiment
+    thisTrials_sequence_probe = trials_sequence_probe.trialList[0]  # so we can initialise stimuli with some values
+    # abbreviate parameter names if possible (e.g. rgb = thisTrials_sequence_probe.rgb)
+    if thisTrials_sequence_probe != None:
+        for paramName in thisTrials_sequence_probe:
+            globals()[paramName] = thisTrials_sequence_probe[paramName]
     if thisSession is not None:
         # if running in a Session with a Liaison client, send data up to now
         thisSession.sendExperimentData()
     
-    for thisTrial in trials:
-        trials.status = STARTED
-        if hasattr(thisTrial, 'status'):
-            thisTrial.status = STARTED
-        currentLoop = trials
+    for thisTrials_sequence_probe in trials_sequence_probe:
+        trials_sequence_probe.status = STARTED
+        if hasattr(thisTrials_sequence_probe, 'status'):
+            thisTrials_sequence_probe.status = STARTED
+        currentLoop = trials_sequence_probe
         thisExp.timestampOnFlip(win, 'thisRow.t', format=globalClock.format)
         if thisSession is not None:
             # if running in a Session with a Liaison client, send data up to now
             thisSession.sendExperimentData()
-        # abbreviate parameter names if possible (e.g. rgb = thisTrial.rgb)
-        if thisTrial != None:
-            for paramName in thisTrial:
-                globals()[paramName] = thisTrial[paramName]
+        # abbreviate parameter names if possible (e.g. rgb = thisTrials_sequence_probe.rgb)
+        if thisTrials_sequence_probe != None:
+            for paramName in thisTrials_sequence_probe:
+                globals()[paramName] = thisTrials_sequence_probe[paramName]
         
         # --- Prepare to start Routine "VWM_memory_display" ---
         # create an object to store info about Routine VWM_memory_display
@@ -2203,7 +2203,7 @@ def run(expInfo, thisExp, win, globalClock=None, thisSession=None):
         VWM_memory_display.forceEnded = routineForceEnded = not continueRoutine
         while continueRoutine:
             # if trial has changed, end Routine now
-            if hasattr(thisTrial, 'status') and thisTrial.status == STOPPING:
+            if hasattr(thisTrials_sequence_probe, 'status') and thisTrials_sequence_probe.status == STOPPING:
                 continueRoutine = False
             # get current time
             t = routineTimer.getTime()
@@ -2360,7 +2360,7 @@ def run(expInfo, thisExp, win, globalClock=None, thisSession=None):
         retention.forceEnded = routineForceEnded = not continueRoutine
         while continueRoutine:
             # if trial has changed, end Routine now
-            if hasattr(thisTrial, 'status') and thisTrial.status == STOPPING:
+            if hasattr(thisTrials_sequence_probe, 'status') and thisTrials_sequence_probe.status == STOPPING:
                 continueRoutine = False
             # get current time
             t = routineTimer.getTime()
@@ -2562,7 +2562,7 @@ def run(expInfo, thisExp, win, globalClock=None, thisSession=None):
         VWM_memory_probe.forceEnded = routineForceEnded = not continueRoutine
         while continueRoutine:
             # if trial has changed, end Routine now
-            if hasattr(thisTrial, 'status') and thisTrial.status == STOPPING:
+            if hasattr(thisTrials_sequence_probe, 'status') and thisTrials_sequence_probe.status == STOPPING:
                 continueRoutine = False
             # get current time
             t = routineTimer.getTime()
@@ -2724,7 +2724,7 @@ def run(expInfo, thisExp, win, globalClock=None, thisSession=None):
         VWM_response.forceEnded = routineForceEnded = not continueRoutine
         while continueRoutine and routineTimer.getTime() < 3.0:
             # if trial has changed, end Routine now
-            if hasattr(thisTrial, 'status') and thisTrial.status == STOPPING:
+            if hasattr(thisTrials_sequence_probe, 'status') and thisTrials_sequence_probe.status == STOPPING:
                 continueRoutine = False
             # get current time
             t = routineTimer.getTime()
@@ -2885,10 +2885,10 @@ def run(expInfo, thisExp, win, globalClock=None, thisSession=None):
         # check responses
         if key_resp_VWM.keys in ['', [], None]:  # No response was made
             key_resp_VWM.keys = None
-        trials.addData('key_resp_VWM.keys',key_resp_VWM.keys)
+        trials_sequence_probe.addData('key_resp_VWM.keys',key_resp_VWM.keys)
         if key_resp_VWM.keys != None:  # we had a response
-            trials.addData('key_resp_VWM.rt', key_resp_VWM.rt)
-            trials.addData('key_resp_VWM.duration', key_resp_VWM.duration)
+            trials_sequence_probe.addData('key_resp_VWM.rt', key_resp_VWM.rt)
+            trials_sequence_probe.addData('key_resp_VWM.duration', key_resp_VWM.duration)
         # using non-slip timing so subtract the expected duration of this Routine (unless ended on request)
         if VWM_response.maxDurationReached:
             routineTimer.addTime(-VWM_response.maxDuration)
@@ -2930,7 +2930,7 @@ def run(expInfo, thisExp, win, globalClock=None, thisSession=None):
         ITI.forceEnded = routineForceEnded = not continueRoutine
         while continueRoutine and routineTimer.getTime() < 1.0:
             # if trial has changed, end Routine now
-            if hasattr(thisTrial, 'status') and thisTrial.status == STOPPING:
+            if hasattr(thisTrials_sequence_probe, 'status') and thisTrials_sequence_probe.status == STOPPING:
                 continueRoutine = False
             # get current time
             t = routineTimer.getTime()
@@ -3023,11 +3023,11 @@ def run(expInfo, thisExp, win, globalClock=None, thisSession=None):
             routineTimer.reset()
         else:
             routineTimer.addTime(-1.000000)
-        # mark thisTrial as finished
-        if hasattr(thisTrial, 'status'):
-            thisTrial.status = FINISHED
+        # mark thisTrials_sequence_probe as finished
+        if hasattr(thisTrials_sequence_probe, 'status'):
+            thisTrials_sequence_probe.status = FINISHED
         # if awaiting a pause, pause now
-        if trials.status == PAUSED:
+        if trials_sequence_probe.status == PAUSED:
             thisExp.status = PAUSED
             pauseExperiment(
                 thisExp=thisExp, 
@@ -3035,11 +3035,11 @@ def run(expInfo, thisExp, win, globalClock=None, thisSession=None):
                 timers=[globalClock], 
             )
             # once done pausing, restore running status
-            trials.status = STARTED
+            trials_sequence_probe.status = STARTED
         thisExp.nextEntry()
         
-    # completed 1.0 repeats of 'trials'
-    trials.status = FINISHED
+    # completed 10.0 repeats of 'trials_sequence_probe'
+    trials_sequence_probe.status = FINISHED
     
     if thisSession is not None:
         # if running in a Session with a Liaison client, send data up to now
