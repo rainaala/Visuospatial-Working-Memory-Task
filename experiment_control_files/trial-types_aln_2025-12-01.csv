@@ -1,0 +1,5 @@
+memory_type,probe_type
+continuous,discrete
+continuous,continuous
+discrete,discrete
+discrete,continuous
