@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 This experiment was created using PsychoPy3 Experiment Builder (v2025.1.1),
-    on Tue Dec  9 19:26:22 2025
+    on Wed Dec 10 13:17:38 2025
 If you publish work using this script the most relevant publication is:
 
     Peirce J, Gray JR, Simpson S, MacAskill M, Höchenberger R, Sogo H, Kastman E, Lindeløv JK. (2019) 
@@ -37,7 +37,7 @@ import random
 
 random.seed = 1
 
-max_eccen = 0.5
+max_eccen = 0.4
 
 def get_random_path_coord( coords_to_avoid ):
     # Select random x and y values that are different from those in coords_to_avoid
@@ -54,7 +54,7 @@ import random
 
 random.seed = 1
 
-max_eccen = 0.5
+max_eccen = 0.4
 
 def get_random_path_coord( coords_to_avoid ):
     # Select random x and y values that are different from those in coords_to_avoid
@@ -430,7 +430,7 @@ def run(expInfo, thisExp, win, globalClock=None, thisSession=None):
         win=win, name='ITI_fix', vertices='cross',
         size=(0.05, 0.05),
         ori=0.0, pos=(0, 0), draggable=False, anchor='center',
-        lineWidth=1.0,
+        lineWidth=2.0,
         colorSpace='rgb', lineColor='gray', fillColor='white',
         opacity=None, depth=0.0, interpolate=True)
     
@@ -459,7 +459,7 @@ def run(expInfo, thisExp, win, globalClock=None, thisSession=None):
         win=win, name='mem_fix', vertices='cross',
         size=(0.05, 0.05),
         ori=0.0, pos=(0, 0), draggable=False, anchor='center',
-        lineWidth=1.0,
+        lineWidth=2.0,
         colorSpace='rgb', lineColor='gray', fillColor='white',
         opacity=None, depth=-2.0, interpolate=True)
     
@@ -468,7 +468,7 @@ def run(expInfo, thisExp, win, globalClock=None, thisSession=None):
         win=win, name='retention_fix', vertices='cross',
         size=(0.05, 0.05),
         ori=0.0, pos=(0, 0), draggable=False, anchor='center',
-        lineWidth=1.0,
+        lineWidth=2.0,
         colorSpace='rgb', lineColor='gray', fillColor='white',
         opacity=None, depth=0.0, interpolate=True)
     
@@ -484,7 +484,7 @@ def run(expInfo, thisExp, win, globalClock=None, thisSession=None):
         win=win, name='probe_fix', vertices='cross',
         size=(0.05, 0.05),
         ori=0.0, pos=(0, 0), draggable=False, anchor='center',
-        lineWidth=1.0,
+        lineWidth=2.0,
         colorSpace='rgb', lineColor='gray', fillColor='white',
         opacity=None, depth=-2.0, interpolate=True)
     
@@ -510,7 +510,7 @@ def run(expInfo, thisExp, win, globalClock=None, thisSession=None):
         win=win, name='ITI_fix', vertices='cross',
         size=(0.05, 0.05),
         ori=0.0, pos=(0, 0), draggable=False, anchor='center',
-        lineWidth=1.0,
+        lineWidth=2.0,
         colorSpace='rgb', lineColor='gray', fillColor='white',
         opacity=None, depth=0.0, interpolate=True)
     
@@ -529,7 +529,7 @@ def run(expInfo, thisExp, win, globalClock=None, thisSession=None):
         win=win, name='ITI_fix', vertices='cross',
         size=(0.05, 0.05),
         ori=0.0, pos=(0, 0), draggable=False, anchor='center',
-        lineWidth=1.0,
+        lineWidth=2.0,
         colorSpace='rgb', lineColor='gray', fillColor='white',
         opacity=None, depth=0.0, interpolate=True)
     
@@ -558,7 +558,7 @@ def run(expInfo, thisExp, win, globalClock=None, thisSession=None):
         win=win, name='mem_fix', vertices='cross',
         size=(0.05, 0.05),
         ori=0.0, pos=(0, 0), draggable=False, anchor='center',
-        lineWidth=1.0,
+        lineWidth=2.0,
         colorSpace='rgb', lineColor='gray', fillColor='white',
         opacity=None, depth=-2.0, interpolate=True)
     
@@ -567,7 +567,7 @@ def run(expInfo, thisExp, win, globalClock=None, thisSession=None):
         win=win, name='retention_fix', vertices='cross',
         size=(0.05, 0.05),
         ori=0.0, pos=(0, 0), draggable=False, anchor='center',
-        lineWidth=1.0,
+        lineWidth=2.0,
         colorSpace='rgb', lineColor='gray', fillColor='white',
         opacity=None, depth=0.0, interpolate=True)
     
@@ -583,7 +583,7 @@ def run(expInfo, thisExp, win, globalClock=None, thisSession=None):
         win=win, name='probe_fix', vertices='cross',
         size=(0.05, 0.05),
         ori=0.0, pos=(0, 0), draggable=False, anchor='center',
-        lineWidth=1.0,
+        lineWidth=2.0,
         colorSpace='rgb', lineColor='gray', fillColor='white',
         opacity=None, depth=-2.0, interpolate=True)
     
@@ -609,7 +609,7 @@ def run(expInfo, thisExp, win, globalClock=None, thisSession=None):
         win=win, name='ITI_fix', vertices='cross',
         size=(0.05, 0.05),
         ori=0.0, pos=(0, 0), draggable=False, anchor='center',
-        lineWidth=1.0,
+        lineWidth=2.0,
         colorSpace='rgb', lineColor='gray', fillColor='white',
         opacity=None, depth=0.0, interpolate=True)
     
@@ -974,7 +974,8 @@ def run(expInfo, thisExp, win, globalClock=None, thisSession=None):
         # start pause timer
         pause_timer = core.CountdownTimer(pause_duration)
         
-        
+        # add data to output
+        thisExp.addData('path_coords', path_coords)
         
         
         # store start times for VWM_memory_display
@@ -1336,6 +1337,9 @@ def run(expInfo, thisExp, win, globalClock=None, thisSession=None):
             response_string = "F same                           J different"
         else:
             response_string = "F old                                  J new"
+            
+            # add data to output
+        thisExp.addData('path_coords_probe', path_coords_probe)
         # store start times for VWM_memory_probe
         VWM_memory_probe.tStartRefresh = win.getFutureFlipTime(clock=globalClock)
         VWM_memory_probe.tStart = globalClock.getTime(format='float')
@@ -2176,7 +2180,8 @@ def run(expInfo, thisExp, win, globalClock=None, thisSession=None):
         # start pause timer
         pause_timer = core.CountdownTimer(pause_duration)
         
-        
+        # add data to output
+        thisExp.addData('path_coords', path_coords)
         
         
         # store start times for VWM_memory_display
@@ -2538,6 +2543,9 @@ def run(expInfo, thisExp, win, globalClock=None, thisSession=None):
             response_string = "F same                           J different"
         else:
             response_string = "F old                                  J new"
+            
+            # add data to output
+        thisExp.addData('path_coords_probe', path_coords_probe)
         # store start times for VWM_memory_probe
         VWM_memory_probe.tStartRefresh = win.getFutureFlipTime(clock=globalClock)
         VWM_memory_probe.tStart = globalClock.getTime(format='float')
