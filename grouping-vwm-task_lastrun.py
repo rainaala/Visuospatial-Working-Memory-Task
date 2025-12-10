@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 This experiment was created using PsychoPy3 Experiment Builder (v2025.1.1),
-    on Tue Dec  9 18:17:38 2025
+    on Tue Dec  9 19:01:24 2025
 If you publish work using this script the most relevant publication is:
 
     Peirce J, Gray JR, Simpson S, MacAskill M, Höchenberger R, Sogo H, Kastman E, Lindeløv JK. (2019) 
@@ -49,6 +49,23 @@ def get_random_path_coord( coords_to_avoid ):
         y = round(max_eccen * random.uniform(-1, 1), 1)
     coord = (x,y)
     return coord
+# Run 'Before Experiment' code from memory_sequence_code
+import random
+
+random.seed = 1
+
+max_eccen = 0.5
+
+def get_random_path_coord( coords_to_avoid ):
+    # Select random x and y values that are different from those in coords_to_avoid
+    x = coords_to_avoid[0]
+    while abs(x - coords_to_avoid[0]) < 0.2:
+        x = round(max_eccen * random.uniform(-1, 1), 1)
+    y = coords_to_avoid[1]
+    while abs(y - coords_to_avoid[1]) < 0.2:
+        y = round(max_eccen * random.uniform(-1, 1), 1)
+    coord = (x,y)
+    return coord
 # --- Setup global variables (available in all functions) ---
 # create a device manager to handle hardware (keyboards, mice, mirophones, speakers, etc.)
 deviceManager = hardware.DeviceManager()
@@ -63,7 +80,6 @@ runAtExit = []
 # information about this experiment
 expInfo = {
     'participant': 'test',
-    'session': '01',
     'date|hid': data.getDateStr(),
     'expName|hid': expName,
     'expVersion|hid': expVersion,
@@ -274,11 +290,23 @@ def setupDevices(expInfo, thisExp, win):
         deviceManager.addDevice(
             deviceClass='keyboard', deviceName='defaultKeyboard', backend='ptb'
         )
+    if deviceManager.getDevice('key_resp_single_instructions') is None:
+        # initialise key_resp_single_instructions
+        key_resp_single_instructions = deviceManager.addDevice(
+            deviceClass='keyboard',
+            deviceName='key_resp_single_instructions',
+        )
     if deviceManager.getDevice('key_resp_VWM') is None:
         # initialise key_resp_VWM
         key_resp_VWM = deviceManager.addDevice(
             deviceClass='keyboard',
             deviceName='key_resp_VWM',
+        )
+    if deviceManager.getDevice('key_resp_seq_instructions') is None:
+        # initialise key_resp_seq_instructions
+        key_resp_seq_instructions = deviceManager.addDevice(
+            deviceClass='keyboard',
+            deviceName='key_resp_seq_instructions',
         )
     # return True if completed successfully
     return True
@@ -386,6 +414,124 @@ def run(expInfo, thisExp, win, globalClock=None, thisSession=None):
         frameDur = 1.0 / 60.0  # could not measure, so guess
     
     # Start Code - component code to be run after the window creation
+    
+    # --- Initialize components for Routine "single_probe_instructions" ---
+    text_single_instructions = visual.TextStim(win=win, name='text_single_instructions',
+        text='In this task, you will remember the locations of a disc. On some trials, the disc will move from place to place, pausing at each corner. On other trials, the disc will appear at individual locations, but you will not see it move.\n\nAfter the series of locations, there will be a brief pause, and then the disc will appear at a single location. Your task is to determine whether that location is one of the ones the disc occupied prior (press "F") or is different (press "J").\n\nPress space to continue to this part of the experiment.',
+        font='Arial',
+        pos=(0, 0), draggable=False, height=0.05, wrapWidth=None, ori=0.0, 
+        color='white', colorSpace='rgb', opacity=None, 
+        languageStyle='LTR',
+        depth=0.0);
+    key_resp_single_instructions = keyboard.Keyboard(deviceName='key_resp_single_instructions')
+    
+    # --- Initialize components for Routine "ITI" ---
+    ITI_fix = visual.ShapeStim(
+        win=win, name='ITI_fix', vertices='cross',
+        size=(0.05, 0.05),
+        ori=0.0, pos=(0, 0), draggable=False, anchor='center',
+        lineWidth=1.0,
+        colorSpace='rgb', lineColor='gray', fillColor='white',
+        opacity=None, depth=0.0, interpolate=True)
+    
+    # --- Initialize components for Routine "VWM_memory_display" ---
+    # Run 'Begin Experiment' code from memory_sequence_code
+    # Set path parameters
+    path_length = 5
+    pause_duration = 0.3 # in seconds
+    retention_interval = 3.0 # 1000 ms
+    
+    # Movement speed (adjust for smoothness)
+    #step_size = 0.01 # speeding up for debugging
+    step_size = 0.005
+    
+    # colors 
+    white = [1,1,1]
+    gray = [0,0,0]
+    mem_disc = visual.ShapeStim(
+        win=win, name='mem_disc',
+        size=(0.1,0.1), vertices='circle',
+        ori=0.0, pos=[0,0], draggable=False, anchor='center',
+        lineWidth=1.0,
+        colorSpace='rgb', lineColor='white', fillColor='white',
+        opacity=None, depth=-1.0, interpolate=True)
+    mem_fix = visual.ShapeStim(
+        win=win, name='mem_fix', vertices='cross',
+        size=(0.05, 0.05),
+        ori=0.0, pos=(0, 0), draggable=False, anchor='center',
+        lineWidth=1.0,
+        colorSpace='rgb', lineColor='gray', fillColor='white',
+        opacity=None, depth=-2.0, interpolate=True)
+    
+    # --- Initialize components for Routine "retention" ---
+    retention_fix = visual.ShapeStim(
+        win=win, name='retention_fix', vertices='cross',
+        size=(0.05, 0.05),
+        ori=0.0, pos=(0, 0), draggable=False, anchor='center',
+        lineWidth=1.0,
+        colorSpace='rgb', lineColor='gray', fillColor='white',
+        opacity=None, depth=0.0, interpolate=True)
+    
+    # --- Initialize components for Routine "VWM_memory_probe" ---
+    probe_disc = visual.ShapeStim(
+        win=win, name='probe_disc',
+        size=(0.1,0.1), vertices='circle',
+        ori=0.0, pos=[0,0], draggable=False, anchor='center',
+        lineWidth=1.0,
+        colorSpace='rgb', lineColor='white', fillColor='white',
+        opacity=None, depth=-1.0, interpolate=True)
+    probe_fix = visual.ShapeStim(
+        win=win, name='probe_fix', vertices='cross',
+        size=(0.05, 0.05),
+        ori=0.0, pos=(0, 0), draggable=False, anchor='center',
+        lineWidth=1.0,
+        colorSpace='rgb', lineColor='gray', fillColor='white',
+        opacity=None, depth=-2.0, interpolate=True)
+    
+    # --- Initialize components for Routine "VWM_response" ---
+    response_cue = visual.TextStim(win=win, name='response_cue',
+        text='?',
+        font='Arial',
+        pos=(0, 0), draggable=False, height=0.05, wrapWidth=None, ori=0.0, 
+        color='white', colorSpace='rgb', opacity=None, 
+        languageStyle='LTR',
+        depth=0.0);
+    response_instructions = visual.TextStim(win=win, name='response_instructions',
+        text='',
+        font='Arial',
+        pos=(0, -.4), draggable=False, height=0.05, wrapWidth=None, ori=0.0, 
+        color='white', colorSpace='rgb', opacity=None, 
+        languageStyle='LTR',
+        depth=-1.0);
+    key_resp_VWM = keyboard.Keyboard(deviceName='key_resp_VWM')
+    
+    # --- Initialize components for Routine "ITI" ---
+    ITI_fix = visual.ShapeStim(
+        win=win, name='ITI_fix', vertices='cross',
+        size=(0.05, 0.05),
+        ori=0.0, pos=(0, 0), draggable=False, anchor='center',
+        lineWidth=1.0,
+        colorSpace='rgb', lineColor='gray', fillColor='white',
+        opacity=None, depth=0.0, interpolate=True)
+    
+    # --- Initialize components for Routine "sequence_probe_instructions" ---
+    text_seq_instructions = visual.TextStim(win=win, name='text_seq_instructions',
+        text='In this task, you will remember the locations of a disc. On some trials, the disc will move from place to place, pausing at each corner. On other trials, the disc will appear at individual locations, but you will not see it move.\n\nAfter the series of locations, there will be a brief pause, and then the disc will move again. Your task is to determine whether sequence of locations is the same as previously (press "F") or is different (press "J").\n\nPress space to continue to this part of the experiment.',
+        font='Arial',
+        pos=(0, 0), draggable=False, height=0.05, wrapWidth=None, ori=0.0, 
+        color='white', colorSpace='rgb', opacity=None, 
+        languageStyle='LTR',
+        depth=0.0);
+    key_resp_seq_instructions = keyboard.Keyboard(deviceName='key_resp_seq_instructions')
+    
+    # --- Initialize components for Routine "ITI" ---
+    ITI_fix = visual.ShapeStim(
+        win=win, name='ITI_fix', vertices='cross',
+        size=(0.05, 0.05),
+        ori=0.0, pos=(0, 0), draggable=False, anchor='center',
+        lineWidth=1.0,
+        colorSpace='rgb', lineColor='gray', fillColor='white',
+        opacity=None, depth=0.0, interpolate=True)
     
     # --- Initialize components for Routine "VWM_memory_display" ---
     # Run 'Begin Experiment' code from memory_sequence_code
@@ -495,18 +641,1482 @@ def run(expInfo, thisExp, win, globalClock=None, thisSession=None):
         format='%Y-%m-%d %Hh%M.%S.%f %z', fractionalSecondDigits=6
     )
     
+    # --- Prepare to start Routine "single_probe_instructions" ---
+    # create an object to store info about Routine single_probe_instructions
+    single_probe_instructions = data.Routine(
+        name='single_probe_instructions',
+        components=[text_single_instructions, key_resp_single_instructions],
+    )
+    single_probe_instructions.status = NOT_STARTED
+    continueRoutine = True
+    # update component parameters for each repeat
+    # create starting attributes for key_resp_single_instructions
+    key_resp_single_instructions.keys = []
+    key_resp_single_instructions.rt = []
+    _key_resp_single_instructions_allKeys = []
+    # store start times for single_probe_instructions
+    single_probe_instructions.tStartRefresh = win.getFutureFlipTime(clock=globalClock)
+    single_probe_instructions.tStart = globalClock.getTime(format='float')
+    single_probe_instructions.status = STARTED
+    thisExp.addData('single_probe_instructions.started', single_probe_instructions.tStart)
+    single_probe_instructions.maxDuration = None
+    # keep track of which components have finished
+    single_probe_instructionsComponents = single_probe_instructions.components
+    for thisComponent in single_probe_instructions.components:
+        thisComponent.tStart = None
+        thisComponent.tStop = None
+        thisComponent.tStartRefresh = None
+        thisComponent.tStopRefresh = None
+        if hasattr(thisComponent, 'status'):
+            thisComponent.status = NOT_STARTED
+    # reset timers
+    t = 0
+    _timeToFirstFrame = win.getFutureFlipTime(clock="now")
+    frameN = -1
+    
+    # --- Run Routine "single_probe_instructions" ---
+    single_probe_instructions.forceEnded = routineForceEnded = not continueRoutine
+    while continueRoutine:
+        # get current time
+        t = routineTimer.getTime()
+        tThisFlip = win.getFutureFlipTime(clock=routineTimer)
+        tThisFlipGlobal = win.getFutureFlipTime(clock=None)
+        frameN = frameN + 1  # number of completed frames (so 0 is the first frame)
+        # update/draw components on each frame
+        
+        # *text_single_instructions* updates
+        
+        # if text_single_instructions is starting this frame...
+        if text_single_instructions.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
+            # keep track of start time/frame for later
+            text_single_instructions.frameNStart = frameN  # exact frame index
+            text_single_instructions.tStart = t  # local t and not account for scr refresh
+            text_single_instructions.tStartRefresh = tThisFlipGlobal  # on global time
+            win.timeOnFlip(text_single_instructions, 'tStartRefresh')  # time at next scr refresh
+            # add timestamp to datafile
+            thisExp.timestampOnFlip(win, 'text_single_instructions.started')
+            # update status
+            text_single_instructions.status = STARTED
+            text_single_instructions.setAutoDraw(True)
+        
+        # if text_single_instructions is active this frame...
+        if text_single_instructions.status == STARTED:
+            # update params
+            pass
+        
+        # *key_resp_single_instructions* updates
+        waitOnFlip = False
+        
+        # if key_resp_single_instructions is starting this frame...
+        if key_resp_single_instructions.status == NOT_STARTED and tThisFlip >= 0.5-frameTolerance:
+            # keep track of start time/frame for later
+            key_resp_single_instructions.frameNStart = frameN  # exact frame index
+            key_resp_single_instructions.tStart = t  # local t and not account for scr refresh
+            key_resp_single_instructions.tStartRefresh = tThisFlipGlobal  # on global time
+            win.timeOnFlip(key_resp_single_instructions, 'tStartRefresh')  # time at next scr refresh
+            # add timestamp to datafile
+            thisExp.timestampOnFlip(win, 'key_resp_single_instructions.started')
+            # update status
+            key_resp_single_instructions.status = STARTED
+            # keyboard checking is just starting
+            waitOnFlip = True
+            win.callOnFlip(key_resp_single_instructions.clock.reset)  # t=0 on next screen flip
+            win.callOnFlip(key_resp_single_instructions.clearEvents, eventType='keyboard')  # clear events on next screen flip
+        if key_resp_single_instructions.status == STARTED and not waitOnFlip:
+            theseKeys = key_resp_single_instructions.getKeys(keyList=['space'], ignoreKeys=["escape"], waitRelease=False)
+            _key_resp_single_instructions_allKeys.extend(theseKeys)
+            if len(_key_resp_single_instructions_allKeys):
+                key_resp_single_instructions.keys = _key_resp_single_instructions_allKeys[-1].name  # just the last key pressed
+                key_resp_single_instructions.rt = _key_resp_single_instructions_allKeys[-1].rt
+                key_resp_single_instructions.duration = _key_resp_single_instructions_allKeys[-1].duration
+                # a response ends the routine
+                continueRoutine = False
+        
+        # check for quit (typically the Esc key)
+        if defaultKeyboard.getKeys(keyList=["escape"]):
+            thisExp.status = FINISHED
+        if thisExp.status == FINISHED or endExpNow:
+            endExperiment(thisExp, win=win)
+            return
+        # pause experiment here if requested
+        if thisExp.status == PAUSED:
+            pauseExperiment(
+                thisExp=thisExp, 
+                win=win, 
+                timers=[routineTimer, globalClock], 
+                currentRoutine=single_probe_instructions,
+            )
+            # skip the frame we paused on
+            continue
+        
+        # check if all components have finished
+        if not continueRoutine:  # a component has requested a forced-end of Routine
+            single_probe_instructions.forceEnded = routineForceEnded = True
+            break
+        continueRoutine = False  # will revert to True if at least one component still running
+        for thisComponent in single_probe_instructions.components:
+            if hasattr(thisComponent, "status") and thisComponent.status != FINISHED:
+                continueRoutine = True
+                break  # at least one component has not yet finished
+        
+        # refresh the screen
+        if continueRoutine:  # don't flip if this routine is over or we'll get a blank screen
+            win.flip()
+    
+    # --- Ending Routine "single_probe_instructions" ---
+    for thisComponent in single_probe_instructions.components:
+        if hasattr(thisComponent, "setAutoDraw"):
+            thisComponent.setAutoDraw(False)
+    # store stop times for single_probe_instructions
+    single_probe_instructions.tStop = globalClock.getTime(format='float')
+    single_probe_instructions.tStopRefresh = tThisFlipGlobal
+    thisExp.addData('single_probe_instructions.stopped', single_probe_instructions.tStop)
+    # check responses
+    if key_resp_single_instructions.keys in ['', [], None]:  # No response was made
+        key_resp_single_instructions.keys = None
+    thisExp.addData('key_resp_single_instructions.keys',key_resp_single_instructions.keys)
+    if key_resp_single_instructions.keys != None:  # we had a response
+        thisExp.addData('key_resp_single_instructions.rt', key_resp_single_instructions.rt)
+        thisExp.addData('key_resp_single_instructions.duration', key_resp_single_instructions.duration)
+    thisExp.nextEntry()
+    # the Routine "single_probe_instructions" was not non-slip safe, so reset the non-slip timer
+    routineTimer.reset()
+    
+    # --- Prepare to start Routine "ITI" ---
+    # create an object to store info about Routine ITI
+    ITI = data.Routine(
+        name='ITI',
+        components=[ITI_fix],
+    )
+    ITI.status = NOT_STARTED
+    continueRoutine = True
+    # update component parameters for each repeat
+    # store start times for ITI
+    ITI.tStartRefresh = win.getFutureFlipTime(clock=globalClock)
+    ITI.tStart = globalClock.getTime(format='float')
+    ITI.status = STARTED
+    thisExp.addData('ITI.started', ITI.tStart)
+    ITI.maxDuration = 1
+    # keep track of which components have finished
+    ITIComponents = ITI.components
+    for thisComponent in ITI.components:
+        thisComponent.tStart = None
+        thisComponent.tStop = None
+        thisComponent.tStartRefresh = None
+        thisComponent.tStopRefresh = None
+        if hasattr(thisComponent, 'status'):
+            thisComponent.status = NOT_STARTED
+    # reset timers
+    t = 0
+    _timeToFirstFrame = win.getFutureFlipTime(clock="now")
+    frameN = -1
+    
+    # --- Run Routine "ITI" ---
+    ITI.forceEnded = routineForceEnded = not continueRoutine
+    while continueRoutine and routineTimer.getTime() < 1.0:
+        # get current time
+        t = routineTimer.getTime()
+        tThisFlip = win.getFutureFlipTime(clock=routineTimer)
+        tThisFlipGlobal = win.getFutureFlipTime(clock=None)
+        frameN = frameN + 1  # number of completed frames (so 0 is the first frame)
+        # update/draw components on each frame
+        # is it time to end the Routine? (based on local clock)
+        if tThisFlip > ITI.maxDuration-frameTolerance:
+            ITI.maxDurationReached = True
+            continueRoutine = False
+        
+        # *ITI_fix* updates
+        
+        # if ITI_fix is starting this frame...
+        if ITI_fix.status == NOT_STARTED and tThisFlip >= 0.5-frameTolerance:
+            # keep track of start time/frame for later
+            ITI_fix.frameNStart = frameN  # exact frame index
+            ITI_fix.tStart = t  # local t and not account for scr refresh
+            ITI_fix.tStartRefresh = tThisFlipGlobal  # on global time
+            win.timeOnFlip(ITI_fix, 'tStartRefresh')  # time at next scr refresh
+            # add timestamp to datafile
+            thisExp.timestampOnFlip(win, 'ITI_fix.started')
+            # update status
+            ITI_fix.status = STARTED
+            ITI_fix.setAutoDraw(True)
+        
+        # if ITI_fix is active this frame...
+        if ITI_fix.status == STARTED:
+            # update params
+            pass
+        
+        # if ITI_fix is stopping this frame...
+        if ITI_fix.status == STARTED:
+            # is it time to stop? (based on global clock, using actual start)
+            if tThisFlipGlobal > ITI_fix.tStartRefresh + 0.5-frameTolerance:
+                # keep track of stop time/frame for later
+                ITI_fix.tStop = t  # not accounting for scr refresh
+                ITI_fix.tStopRefresh = tThisFlipGlobal  # on global time
+                ITI_fix.frameNStop = frameN  # exact frame index
+                # add timestamp to datafile
+                thisExp.timestampOnFlip(win, 'ITI_fix.stopped')
+                # update status
+                ITI_fix.status = FINISHED
+                ITI_fix.setAutoDraw(False)
+        
+        # check for quit (typically the Esc key)
+        if defaultKeyboard.getKeys(keyList=["escape"]):
+            thisExp.status = FINISHED
+        if thisExp.status == FINISHED or endExpNow:
+            endExperiment(thisExp, win=win)
+            return
+        # pause experiment here if requested
+        if thisExp.status == PAUSED:
+            pauseExperiment(
+                thisExp=thisExp, 
+                win=win, 
+                timers=[routineTimer, globalClock], 
+                currentRoutine=ITI,
+            )
+            # skip the frame we paused on
+            continue
+        
+        # check if all components have finished
+        if not continueRoutine:  # a component has requested a forced-end of Routine
+            ITI.forceEnded = routineForceEnded = True
+            break
+        continueRoutine = False  # will revert to True if at least one component still running
+        for thisComponent in ITI.components:
+            if hasattr(thisComponent, "status") and thisComponent.status != FINISHED:
+                continueRoutine = True
+                break  # at least one component has not yet finished
+        
+        # refresh the screen
+        if continueRoutine:  # don't flip if this routine is over or we'll get a blank screen
+            win.flip()
+    
+    # --- Ending Routine "ITI" ---
+    for thisComponent in ITI.components:
+        if hasattr(thisComponent, "setAutoDraw"):
+            thisComponent.setAutoDraw(False)
+    # store stop times for ITI
+    ITI.tStop = globalClock.getTime(format='float')
+    ITI.tStopRefresh = tThisFlipGlobal
+    thisExp.addData('ITI.stopped', ITI.tStop)
+    # using non-slip timing so subtract the expected duration of this Routine (unless ended on request)
+    if ITI.maxDurationReached:
+        routineTimer.addTime(-ITI.maxDuration)
+    elif ITI.forceEnded:
+        routineTimer.reset()
+    else:
+        routineTimer.addTime(-1.000000)
+    thisExp.nextEntry()
+    
+    # set up handler to look after randomisation of conditions etc
+    trials_single_probe = data.TrialHandler2(
+        name='trials_single_probe',
+        nReps=1.0, 
+        method='fullRandom', 
+        extraInfo=expInfo, 
+        originPath=-1, 
+        trialList=data.importConditions('experiment_control_files/trial-types_single-probe_2025-12-09.csv'), 
+        seed=None, 
+    )
+    thisExp.addLoop(trials_single_probe)  # add the loop to the experiment
+    thisTrials_single_probe = trials_single_probe.trialList[0]  # so we can initialise stimuli with some values
+    # abbreviate parameter names if possible (e.g. rgb = thisTrials_single_probe.rgb)
+    if thisTrials_single_probe != None:
+        for paramName in thisTrials_single_probe:
+            globals()[paramName] = thisTrials_single_probe[paramName]
+    if thisSession is not None:
+        # if running in a Session with a Liaison client, send data up to now
+        thisSession.sendExperimentData()
+    
+    for thisTrials_single_probe in trials_single_probe:
+        trials_single_probe.status = STARTED
+        if hasattr(thisTrials_single_probe, 'status'):
+            thisTrials_single_probe.status = STARTED
+        currentLoop = trials_single_probe
+        thisExp.timestampOnFlip(win, 'thisRow.t', format=globalClock.format)
+        if thisSession is not None:
+            # if running in a Session with a Liaison client, send data up to now
+            thisSession.sendExperimentData()
+        # abbreviate parameter names if possible (e.g. rgb = thisTrials_single_probe.rgb)
+        if thisTrials_single_probe != None:
+            for paramName in thisTrials_single_probe:
+                globals()[paramName] = thisTrials_single_probe[paramName]
+        
+        # --- Prepare to start Routine "VWM_memory_display" ---
+        # create an object to store info about Routine VWM_memory_display
+        VWM_memory_display = data.Routine(
+            name='VWM_memory_display',
+            components=[mem_disc, mem_fix],
+        )
+        VWM_memory_display.status = NOT_STARTED
+        continueRoutine = True
+        # update component parameters for each repeat
+        # Run 'Begin Routine' code from memory_sequence_code
+        # Get locations for this trial
+        path_coords = []
+        ## path coords is a list of (x,y) tuples
+        for segment in range(path_length):
+            if segment == 0:
+                segment_coord = (0,0)
+            else:
+                segment_coord = get_random_path_coord(path_coords[segment-1])
+        
+            path_coords.append(segment_coord)
+        #print(path_coords)
+        
+        # Initialize path steps
+        segment = 0
+        
+        # set initial disc position
+        disc_position = path_coords[segment]
+        disc_color = white
+        path_end = path_coords[segment + 1]
+        
+        # start pause timer
+        pause_timer = core.CountdownTimer(pause_duration)
+        
+        
+        
+        
+        # store start times for VWM_memory_display
+        VWM_memory_display.tStartRefresh = win.getFutureFlipTime(clock=globalClock)
+        VWM_memory_display.tStart = globalClock.getTime(format='float')
+        VWM_memory_display.status = STARTED
+        thisExp.addData('VWM_memory_display.started', VWM_memory_display.tStart)
+        VWM_memory_display.maxDuration = None
+        # keep track of which components have finished
+        VWM_memory_displayComponents = VWM_memory_display.components
+        for thisComponent in VWM_memory_display.components:
+            thisComponent.tStart = None
+            thisComponent.tStop = None
+            thisComponent.tStartRefresh = None
+            thisComponent.tStopRefresh = None
+            if hasattr(thisComponent, 'status'):
+                thisComponent.status = NOT_STARTED
+        # reset timers
+        t = 0
+        _timeToFirstFrame = win.getFutureFlipTime(clock="now")
+        frameN = -1
+        
+        # --- Run Routine "VWM_memory_display" ---
+        VWM_memory_display.forceEnded = routineForceEnded = not continueRoutine
+        while continueRoutine:
+            # if trial has changed, end Routine now
+            if hasattr(thisTrials_single_probe, 'status') and thisTrials_single_probe.status == STOPPING:
+                continueRoutine = False
+            # get current time
+            t = routineTimer.getTime()
+            tThisFlip = win.getFutureFlipTime(clock=routineTimer)
+            tThisFlipGlobal = win.getFutureFlipTime(clock=None)
+            frameN = frameN + 1  # number of completed frames (so 0 is the first frame)
+            # update/draw components on each frame
+            # Run 'Each Frame' code from memory_sequence_code
+            
+            if pause_timer.getTime() <= 0 and segment < path_length - 1:
+                path_end = path_coords[segment + 1]
+                # get euclidean distance
+                dx = path_end[0] - disc_position[0]
+                dy = path_end[1] - disc_position[1]
+            
+                distance = (dx**2 + dy**2) ** 0.5
+                if distance > step_size:
+                    # move a small step toward the target
+                    new_x = disc_position[0] + dx * ( step_size / distance )
+                    new_y = disc_position[1] + dy * ( step_size / distance )
+                    if memory_type == "continuous":
+                        disc_color = white
+                    else:
+                        disc_color = gray
+                else:
+                    # we've reached the target, snap to position and update segment counter
+                    new_x = path_end[0]
+                    new_y = path_end[1]
+                    disc_color = white
+                    # start pause timer
+                    pause_timer = core.CountdownTimer(pause_duration)    
+                    segment = segment + 1        
+                disc_position = (new_x, new_y)    
+            elif segment >= path_length - 1 and pause_timer.getTime() <= 0:
+                disc_color = gray
+                continueRoutine = False  # reached last point
+            
+            
+            
+            # *mem_disc* updates
+            
+            # if mem_disc is starting this frame...
+            if mem_disc.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
+                # keep track of start time/frame for later
+                mem_disc.frameNStart = frameN  # exact frame index
+                mem_disc.tStart = t  # local t and not account for scr refresh
+                mem_disc.tStartRefresh = tThisFlipGlobal  # on global time
+                win.timeOnFlip(mem_disc, 'tStartRefresh')  # time at next scr refresh
+                # add timestamp to datafile
+                thisExp.timestampOnFlip(win, 'mem_disc.started')
+                # update status
+                mem_disc.status = STARTED
+                mem_disc.setAutoDraw(True)
+            
+            # if mem_disc is active this frame...
+            if mem_disc.status == STARTED:
+                # update params
+                mem_disc.setFillColor(disc_color, log=False)
+                mem_disc.setPos(disc_position, log=False)
+                mem_disc.setLineColor(disc_color, log=False)
+            
+            # *mem_fix* updates
+            
+            # if mem_fix is starting this frame...
+            if mem_fix.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
+                # keep track of start time/frame for later
+                mem_fix.frameNStart = frameN  # exact frame index
+                mem_fix.tStart = t  # local t and not account for scr refresh
+                mem_fix.tStartRefresh = tThisFlipGlobal  # on global time
+                win.timeOnFlip(mem_fix, 'tStartRefresh')  # time at next scr refresh
+                # add timestamp to datafile
+                thisExp.timestampOnFlip(win, 'mem_fix.started')
+                # update status
+                mem_fix.status = STARTED
+                mem_fix.setAutoDraw(True)
+            
+            # if mem_fix is active this frame...
+            if mem_fix.status == STARTED:
+                # update params
+                pass
+            
+            # check for quit (typically the Esc key)
+            if defaultKeyboard.getKeys(keyList=["escape"]):
+                thisExp.status = FINISHED
+            if thisExp.status == FINISHED or endExpNow:
+                endExperiment(thisExp, win=win)
+                return
+            # pause experiment here if requested
+            if thisExp.status == PAUSED:
+                pauseExperiment(
+                    thisExp=thisExp, 
+                    win=win, 
+                    timers=[routineTimer, globalClock], 
+                    currentRoutine=VWM_memory_display,
+                )
+                # skip the frame we paused on
+                continue
+            
+            # check if all components have finished
+            if not continueRoutine:  # a component has requested a forced-end of Routine
+                VWM_memory_display.forceEnded = routineForceEnded = True
+                break
+            continueRoutine = False  # will revert to True if at least one component still running
+            for thisComponent in VWM_memory_display.components:
+                if hasattr(thisComponent, "status") and thisComponent.status != FINISHED:
+                    continueRoutine = True
+                    break  # at least one component has not yet finished
+            
+            # refresh the screen
+            if continueRoutine:  # don't flip if this routine is over or we'll get a blank screen
+                win.flip()
+        
+        # --- Ending Routine "VWM_memory_display" ---
+        for thisComponent in VWM_memory_display.components:
+            if hasattr(thisComponent, "setAutoDraw"):
+                thisComponent.setAutoDraw(False)
+        # store stop times for VWM_memory_display
+        VWM_memory_display.tStop = globalClock.getTime(format='float')
+        VWM_memory_display.tStopRefresh = tThisFlipGlobal
+        thisExp.addData('VWM_memory_display.stopped', VWM_memory_display.tStop)
+        # the Routine "VWM_memory_display" was not non-slip safe, so reset the non-slip timer
+        routineTimer.reset()
+        
+        # --- Prepare to start Routine "retention" ---
+        # create an object to store info about Routine retention
+        retention = data.Routine(
+            name='retention',
+            components=[retention_fix],
+        )
+        retention.status = NOT_STARTED
+        continueRoutine = True
+        # update component parameters for each repeat
+        # store start times for retention
+        retention.tStartRefresh = win.getFutureFlipTime(clock=globalClock)
+        retention.tStart = globalClock.getTime(format='float')
+        retention.status = STARTED
+        thisExp.addData('retention.started', retention.tStart)
+        retention.maxDuration = None
+        # keep track of which components have finished
+        retentionComponents = retention.components
+        for thisComponent in retention.components:
+            thisComponent.tStart = None
+            thisComponent.tStop = None
+            thisComponent.tStartRefresh = None
+            thisComponent.tStopRefresh = None
+            if hasattr(thisComponent, 'status'):
+                thisComponent.status = NOT_STARTED
+        # reset timers
+        t = 0
+        _timeToFirstFrame = win.getFutureFlipTime(clock="now")
+        frameN = -1
+        
+        # --- Run Routine "retention" ---
+        retention.forceEnded = routineForceEnded = not continueRoutine
+        while continueRoutine:
+            # if trial has changed, end Routine now
+            if hasattr(thisTrials_single_probe, 'status') and thisTrials_single_probe.status == STOPPING:
+                continueRoutine = False
+            # get current time
+            t = routineTimer.getTime()
+            tThisFlip = win.getFutureFlipTime(clock=routineTimer)
+            tThisFlipGlobal = win.getFutureFlipTime(clock=None)
+            frameN = frameN + 1  # number of completed frames (so 0 is the first frame)
+            # update/draw components on each frame
+            
+            # *retention_fix* updates
+            
+            # if retention_fix is starting this frame...
+            if retention_fix.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
+                # keep track of start time/frame for later
+                retention_fix.frameNStart = frameN  # exact frame index
+                retention_fix.tStart = t  # local t and not account for scr refresh
+                retention_fix.tStartRefresh = tThisFlipGlobal  # on global time
+                win.timeOnFlip(retention_fix, 'tStartRefresh')  # time at next scr refresh
+                # add timestamp to datafile
+                thisExp.timestampOnFlip(win, 'retention_fix.started')
+                # update status
+                retention_fix.status = STARTED
+                retention_fix.setAutoDraw(True)
+            
+            # if retention_fix is active this frame...
+            if retention_fix.status == STARTED:
+                # update params
+                pass
+            
+            # if retention_fix is stopping this frame...
+            if retention_fix.status == STARTED:
+                # is it time to stop? (based on global clock, using actual start)
+                if tThisFlipGlobal > retention_fix.tStartRefresh + retention_interval-frameTolerance:
+                    # keep track of stop time/frame for later
+                    retention_fix.tStop = t  # not accounting for scr refresh
+                    retention_fix.tStopRefresh = tThisFlipGlobal  # on global time
+                    retention_fix.frameNStop = frameN  # exact frame index
+                    # add timestamp to datafile
+                    thisExp.timestampOnFlip(win, 'retention_fix.stopped')
+                    # update status
+                    retention_fix.status = FINISHED
+                    retention_fix.setAutoDraw(False)
+            
+            # check for quit (typically the Esc key)
+            if defaultKeyboard.getKeys(keyList=["escape"]):
+                thisExp.status = FINISHED
+            if thisExp.status == FINISHED or endExpNow:
+                endExperiment(thisExp, win=win)
+                return
+            # pause experiment here if requested
+            if thisExp.status == PAUSED:
+                pauseExperiment(
+                    thisExp=thisExp, 
+                    win=win, 
+                    timers=[routineTimer, globalClock], 
+                    currentRoutine=retention,
+                )
+                # skip the frame we paused on
+                continue
+            
+            # check if all components have finished
+            if not continueRoutine:  # a component has requested a forced-end of Routine
+                retention.forceEnded = routineForceEnded = True
+                break
+            continueRoutine = False  # will revert to True if at least one component still running
+            for thisComponent in retention.components:
+                if hasattr(thisComponent, "status") and thisComponent.status != FINISHED:
+                    continueRoutine = True
+                    break  # at least one component has not yet finished
+            
+            # refresh the screen
+            if continueRoutine:  # don't flip if this routine is over or we'll get a blank screen
+                win.flip()
+        
+        # --- Ending Routine "retention" ---
+        for thisComponent in retention.components:
+            if hasattr(thisComponent, "setAutoDraw"):
+                thisComponent.setAutoDraw(False)
+        # store stop times for retention
+        retention.tStop = globalClock.getTime(format='float')
+        retention.tStopRefresh = tThisFlipGlobal
+        thisExp.addData('retention.stopped', retention.tStop)
+        # the Routine "retention" was not non-slip safe, so reset the non-slip timer
+        routineTimer.reset()
+        
+        # --- Prepare to start Routine "VWM_memory_probe" ---
+        # create an object to store info about Routine VWM_memory_probe
+        VWM_memory_probe = data.Routine(
+            name='VWM_memory_probe',
+            components=[probe_disc, probe_fix],
+        )
+        VWM_memory_probe.status = NOT_STARTED
+        continueRoutine = True
+        # update component parameters for each repeat
+        # Run 'Begin Routine' code from probe_sequence_code
+        # Get locations for this trial
+        
+        # by default, we reprise the prior coords
+        path_coords_probe = path_coords.copy() # PYTHON VARIABLES ARE DUMB
+        probe_length = path_length # Int, don't need to copy.
+        
+        #print(trials.thisN)
+        print(memory_type)
+        print(probe_type)
+        print(probe_validity)
+        #print(path_coords)
+        
+        if probe_validity == "lure":
+            if probe_type == "sequence":
+                print('generating a sequence lure')
+                # pick a position
+                lure_pos = int(round(random.uniform(1, path_length - 1),0))
+                #print(probe_length)
+                # swap with prior 
+                path_coords_probe[lure_pos] = path_coords[lure_pos - 1]
+        #        print('path_cords_probe first swap')
+        #        print(path_coords_probe)
+                path_coords_probe[lure_pos - 1] = path_coords[lure_pos]
+        #        print('path_coords_probe second swap')
+        #        print(path_coords_probe)
+        
+            elif probe_type == "single":
+                print('generating a single lure')
+                probe_length = 1
+                # generate a lure location
+                x = round(max_eccen * random.uniform(-1, 1), 1)
+                y = round(max_eccen * random.uniform(-1, 1), 1)
+                lure_coords = (x,y)
+                a = 1
+                while a:
+                    # check against memory set
+                    i = 0
+                    for loc in path_coords:
+                        x_distance = abs(loc[0] - lure_coords[0])
+                        y_distance = abs(loc[1] - lure_coords[1])
+                        if x_distance < 0.2 and y_distance < 0.2:
+                            x = round(max_eccen * random.uniform(-1, 1), 1)
+                            y = round(max_eccen * random.uniform(-1, 1), 1)
+                            lure_coords = (x,y)
+                            break
+        #                else:
+        #                    print(loc)
+        #                    print(x_distance)
+        #                    print(y_distance)
+                        a = 0
+                path_coords_probe = [lure_coords]
+                    
+        else: # probe_validity == target
+            if probe_type == "single":
+                print('generating a single target')
+                probe_pos = int(round(random.uniform(1, path_length-1),0))
+                path_coords_probe = [path_coords_probe[probe_pos]]
+                probe_length = 1
+        #    else: # probe_type == "discrete"
+        #        return
+         
+        #print(path_coords)
+        #print(path_coords_probe)
+        
+        # Initialize path steps
+        segment = 0
+        
+        # set initial disc position
+        disc_position = path_coords_probe[segment]
+        #print(disc_position)
+        disc_color = white
+        
+        # start pause timer
+        pause_timer = core.CountdownTimer(pause_duration)
+            
+        if probe_type == "sequence":
+            # set initial endpoint
+            path_end = path_coords_probe[segment + 1]
+        
+        if probe_type == "sequence":
+            response_string = "F same                           J different"
+        else:
+            response_string = "F old                                  J new"
+        # store start times for VWM_memory_probe
+        VWM_memory_probe.tStartRefresh = win.getFutureFlipTime(clock=globalClock)
+        VWM_memory_probe.tStart = globalClock.getTime(format='float')
+        VWM_memory_probe.status = STARTED
+        thisExp.addData('VWM_memory_probe.started', VWM_memory_probe.tStart)
+        VWM_memory_probe.maxDuration = None
+        # keep track of which components have finished
+        VWM_memory_probeComponents = VWM_memory_probe.components
+        for thisComponent in VWM_memory_probe.components:
+            thisComponent.tStart = None
+            thisComponent.tStop = None
+            thisComponent.tStartRefresh = None
+            thisComponent.tStopRefresh = None
+            if hasattr(thisComponent, 'status'):
+                thisComponent.status = NOT_STARTED
+        # reset timers
+        t = 0
+        _timeToFirstFrame = win.getFutureFlipTime(clock="now")
+        frameN = -1
+        
+        # --- Run Routine "VWM_memory_probe" ---
+        VWM_memory_probe.forceEnded = routineForceEnded = not continueRoutine
+        while continueRoutine:
+            # if trial has changed, end Routine now
+            if hasattr(thisTrials_single_probe, 'status') and thisTrials_single_probe.status == STOPPING:
+                continueRoutine = False
+            # get current time
+            t = routineTimer.getTime()
+            tThisFlip = win.getFutureFlipTime(clock=routineTimer)
+            tThisFlipGlobal = win.getFutureFlipTime(clock=None)
+            frameN = frameN + 1  # number of completed frames (so 0 is the first frame)
+            # update/draw components on each frame
+            # Run 'Each Frame' code from probe_sequence_code
+            if pause_timer.getTime() <= 0 and probe_type == "sequence" and segment < probe_length - 1:
+                path_end = path_coords[segment + 1]
+                # get euclidean distance
+                dx = path_end[0] - disc_position[0]
+                dy = path_end[1] - disc_position[1]
+            
+                distance = (dx**2 + dy**2) ** 0.5
+                if distance > step_size:
+                    # move a small step toward the target
+                    new_x = disc_position[0] + dx * ( step_size / distance )
+                    new_y = disc_position[1] + dy * ( step_size / distance )
+                    if memory_type == "continuous":
+                        disc_color = white
+                    else:
+                        disc_color = gray
+                else:
+                    # we've reached the target, snap to position and update segment counter
+                    new_x = path_end[0]
+                    new_y = path_end[1]
+                    disc_color = white
+                    # start pause timer
+                    pause_timer = core.CountdownTimer(pause_duration)    
+                    segment = segment + 1
+                disc_position = (new_x, new_y)
+            elif segment >= probe_length - 1 and pause_timer.getTime() <= 0:
+                disc_color = gray
+                continueRoutine = False  # reached last point
+                
+            
+            
+            
+            # *probe_disc* updates
+            
+            # if probe_disc is starting this frame...
+            if probe_disc.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
+                # keep track of start time/frame for later
+                probe_disc.frameNStart = frameN  # exact frame index
+                probe_disc.tStart = t  # local t and not account for scr refresh
+                probe_disc.tStartRefresh = tThisFlipGlobal  # on global time
+                win.timeOnFlip(probe_disc, 'tStartRefresh')  # time at next scr refresh
+                # add timestamp to datafile
+                thisExp.timestampOnFlip(win, 'probe_disc.started')
+                # update status
+                probe_disc.status = STARTED
+                probe_disc.setAutoDraw(True)
+            
+            # if probe_disc is active this frame...
+            if probe_disc.status == STARTED:
+                # update params
+                probe_disc.setFillColor(disc_color, log=False)
+                probe_disc.setPos(disc_position, log=False)
+                probe_disc.setLineColor(disc_color, log=False)
+            
+            # *probe_fix* updates
+            
+            # if probe_fix is starting this frame...
+            if probe_fix.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
+                # keep track of start time/frame for later
+                probe_fix.frameNStart = frameN  # exact frame index
+                probe_fix.tStart = t  # local t and not account for scr refresh
+                probe_fix.tStartRefresh = tThisFlipGlobal  # on global time
+                win.timeOnFlip(probe_fix, 'tStartRefresh')  # time at next scr refresh
+                # add timestamp to datafile
+                thisExp.timestampOnFlip(win, 'probe_fix.started')
+                # update status
+                probe_fix.status = STARTED
+                probe_fix.setAutoDraw(True)
+            
+            # if probe_fix is active this frame...
+            if probe_fix.status == STARTED:
+                # update params
+                pass
+            
+            # check for quit (typically the Esc key)
+            if defaultKeyboard.getKeys(keyList=["escape"]):
+                thisExp.status = FINISHED
+            if thisExp.status == FINISHED or endExpNow:
+                endExperiment(thisExp, win=win)
+                return
+            # pause experiment here if requested
+            if thisExp.status == PAUSED:
+                pauseExperiment(
+                    thisExp=thisExp, 
+                    win=win, 
+                    timers=[routineTimer, globalClock], 
+                    currentRoutine=VWM_memory_probe,
+                )
+                # skip the frame we paused on
+                continue
+            
+            # check if all components have finished
+            if not continueRoutine:  # a component has requested a forced-end of Routine
+                VWM_memory_probe.forceEnded = routineForceEnded = True
+                break
+            continueRoutine = False  # will revert to True if at least one component still running
+            for thisComponent in VWM_memory_probe.components:
+                if hasattr(thisComponent, "status") and thisComponent.status != FINISHED:
+                    continueRoutine = True
+                    break  # at least one component has not yet finished
+            
+            # refresh the screen
+            if continueRoutine:  # don't flip if this routine is over or we'll get a blank screen
+                win.flip()
+        
+        # --- Ending Routine "VWM_memory_probe" ---
+        for thisComponent in VWM_memory_probe.components:
+            if hasattr(thisComponent, "setAutoDraw"):
+                thisComponent.setAutoDraw(False)
+        # store stop times for VWM_memory_probe
+        VWM_memory_probe.tStop = globalClock.getTime(format='float')
+        VWM_memory_probe.tStopRefresh = tThisFlipGlobal
+        thisExp.addData('VWM_memory_probe.stopped', VWM_memory_probe.tStop)
+        # the Routine "VWM_memory_probe" was not non-slip safe, so reset the non-slip timer
+        routineTimer.reset()
+        
+        # --- Prepare to start Routine "VWM_response" ---
+        # create an object to store info about Routine VWM_response
+        VWM_response = data.Routine(
+            name='VWM_response',
+            components=[response_cue, response_instructions, key_resp_VWM],
+        )
+        VWM_response.status = NOT_STARTED
+        continueRoutine = True
+        # update component parameters for each repeat
+        response_instructions.setText(response_string)
+        # create starting attributes for key_resp_VWM
+        key_resp_VWM.keys = []
+        key_resp_VWM.rt = []
+        _key_resp_VWM_allKeys = []
+        # store start times for VWM_response
+        VWM_response.tStartRefresh = win.getFutureFlipTime(clock=globalClock)
+        VWM_response.tStart = globalClock.getTime(format='float')
+        VWM_response.status = STARTED
+        thisExp.addData('VWM_response.started', VWM_response.tStart)
+        VWM_response.maxDuration = None
+        # keep track of which components have finished
+        VWM_responseComponents = VWM_response.components
+        for thisComponent in VWM_response.components:
+            thisComponent.tStart = None
+            thisComponent.tStop = None
+            thisComponent.tStartRefresh = None
+            thisComponent.tStopRefresh = None
+            if hasattr(thisComponent, 'status'):
+                thisComponent.status = NOT_STARTED
+        # reset timers
+        t = 0
+        _timeToFirstFrame = win.getFutureFlipTime(clock="now")
+        frameN = -1
+        
+        # --- Run Routine "VWM_response" ---
+        VWM_response.forceEnded = routineForceEnded = not continueRoutine
+        while continueRoutine and routineTimer.getTime() < 3.0:
+            # if trial has changed, end Routine now
+            if hasattr(thisTrials_single_probe, 'status') and thisTrials_single_probe.status == STOPPING:
+                continueRoutine = False
+            # get current time
+            t = routineTimer.getTime()
+            tThisFlip = win.getFutureFlipTime(clock=routineTimer)
+            tThisFlipGlobal = win.getFutureFlipTime(clock=None)
+            frameN = frameN + 1  # number of completed frames (so 0 is the first frame)
+            # update/draw components on each frame
+            
+            # *response_cue* updates
+            
+            # if response_cue is starting this frame...
+            if response_cue.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
+                # keep track of start time/frame for later
+                response_cue.frameNStart = frameN  # exact frame index
+                response_cue.tStart = t  # local t and not account for scr refresh
+                response_cue.tStartRefresh = tThisFlipGlobal  # on global time
+                win.timeOnFlip(response_cue, 'tStartRefresh')  # time at next scr refresh
+                # add timestamp to datafile
+                thisExp.timestampOnFlip(win, 'response_cue.started')
+                # update status
+                response_cue.status = STARTED
+                response_cue.setAutoDraw(True)
+            
+            # if response_cue is active this frame...
+            if response_cue.status == STARTED:
+                # update params
+                pass
+            
+            # if response_cue is stopping this frame...
+            if response_cue.status == STARTED:
+                # is it time to stop? (based on global clock, using actual start)
+                if tThisFlipGlobal > response_cue.tStartRefresh + 3-frameTolerance:
+                    # keep track of stop time/frame for later
+                    response_cue.tStop = t  # not accounting for scr refresh
+                    response_cue.tStopRefresh = tThisFlipGlobal  # on global time
+                    response_cue.frameNStop = frameN  # exact frame index
+                    # add timestamp to datafile
+                    thisExp.timestampOnFlip(win, 'response_cue.stopped')
+                    # update status
+                    response_cue.status = FINISHED
+                    response_cue.setAutoDraw(False)
+            
+            # *response_instructions* updates
+            
+            # if response_instructions is starting this frame...
+            if response_instructions.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
+                # keep track of start time/frame for later
+                response_instructions.frameNStart = frameN  # exact frame index
+                response_instructions.tStart = t  # local t and not account for scr refresh
+                response_instructions.tStartRefresh = tThisFlipGlobal  # on global time
+                win.timeOnFlip(response_instructions, 'tStartRefresh')  # time at next scr refresh
+                # add timestamp to datafile
+                thisExp.timestampOnFlip(win, 'response_instructions.started')
+                # update status
+                response_instructions.status = STARTED
+                response_instructions.setAutoDraw(True)
+            
+            # if response_instructions is active this frame...
+            if response_instructions.status == STARTED:
+                # update params
+                pass
+            
+            # if response_instructions is stopping this frame...
+            if response_instructions.status == STARTED:
+                # is it time to stop? (based on global clock, using actual start)
+                if tThisFlipGlobal > response_instructions.tStartRefresh + 3-frameTolerance:
+                    # keep track of stop time/frame for later
+                    response_instructions.tStop = t  # not accounting for scr refresh
+                    response_instructions.tStopRefresh = tThisFlipGlobal  # on global time
+                    response_instructions.frameNStop = frameN  # exact frame index
+                    # add timestamp to datafile
+                    thisExp.timestampOnFlip(win, 'response_instructions.stopped')
+                    # update status
+                    response_instructions.status = FINISHED
+                    response_instructions.setAutoDraw(False)
+            
+            # *key_resp_VWM* updates
+            waitOnFlip = False
+            
+            # if key_resp_VWM is starting this frame...
+            if key_resp_VWM.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
+                # keep track of start time/frame for later
+                key_resp_VWM.frameNStart = frameN  # exact frame index
+                key_resp_VWM.tStart = t  # local t and not account for scr refresh
+                key_resp_VWM.tStartRefresh = tThisFlipGlobal  # on global time
+                win.timeOnFlip(key_resp_VWM, 'tStartRefresh')  # time at next scr refresh
+                # add timestamp to datafile
+                thisExp.timestampOnFlip(win, 'key_resp_VWM.started')
+                # update status
+                key_resp_VWM.status = STARTED
+                # keyboard checking is just starting
+                waitOnFlip = True
+                win.callOnFlip(key_resp_VWM.clock.reset)  # t=0 on next screen flip
+                win.callOnFlip(key_resp_VWM.clearEvents, eventType='keyboard')  # clear events on next screen flip
+            
+            # if key_resp_VWM is stopping this frame...
+            if key_resp_VWM.status == STARTED:
+                # is it time to stop? (based on global clock, using actual start)
+                if tThisFlipGlobal > key_resp_VWM.tStartRefresh + 3-frameTolerance:
+                    # keep track of stop time/frame for later
+                    key_resp_VWM.tStop = t  # not accounting for scr refresh
+                    key_resp_VWM.tStopRefresh = tThisFlipGlobal  # on global time
+                    key_resp_VWM.frameNStop = frameN  # exact frame index
+                    # add timestamp to datafile
+                    thisExp.timestampOnFlip(win, 'key_resp_VWM.stopped')
+                    # update status
+                    key_resp_VWM.status = FINISHED
+                    key_resp_VWM.status = FINISHED
+            if key_resp_VWM.status == STARTED and not waitOnFlip:
+                theseKeys = key_resp_VWM.getKeys(keyList=['f', 'j'], ignoreKeys=["escape"], waitRelease=False)
+                _key_resp_VWM_allKeys.extend(theseKeys)
+                if len(_key_resp_VWM_allKeys):
+                    key_resp_VWM.keys = _key_resp_VWM_allKeys[-1].name  # just the last key pressed
+                    key_resp_VWM.rt = _key_resp_VWM_allKeys[-1].rt
+                    key_resp_VWM.duration = _key_resp_VWM_allKeys[-1].duration
+                    # a response ends the routine
+                    continueRoutine = False
+            
+            # check for quit (typically the Esc key)
+            if defaultKeyboard.getKeys(keyList=["escape"]):
+                thisExp.status = FINISHED
+            if thisExp.status == FINISHED or endExpNow:
+                endExperiment(thisExp, win=win)
+                return
+            # pause experiment here if requested
+            if thisExp.status == PAUSED:
+                pauseExperiment(
+                    thisExp=thisExp, 
+                    win=win, 
+                    timers=[routineTimer, globalClock], 
+                    currentRoutine=VWM_response,
+                )
+                # skip the frame we paused on
+                continue
+            
+            # check if all components have finished
+            if not continueRoutine:  # a component has requested a forced-end of Routine
+                VWM_response.forceEnded = routineForceEnded = True
+                break
+            continueRoutine = False  # will revert to True if at least one component still running
+            for thisComponent in VWM_response.components:
+                if hasattr(thisComponent, "status") and thisComponent.status != FINISHED:
+                    continueRoutine = True
+                    break  # at least one component has not yet finished
+            
+            # refresh the screen
+            if continueRoutine:  # don't flip if this routine is over or we'll get a blank screen
+                win.flip()
+        
+        # --- Ending Routine "VWM_response" ---
+        for thisComponent in VWM_response.components:
+            if hasattr(thisComponent, "setAutoDraw"):
+                thisComponent.setAutoDraw(False)
+        # store stop times for VWM_response
+        VWM_response.tStop = globalClock.getTime(format='float')
+        VWM_response.tStopRefresh = tThisFlipGlobal
+        thisExp.addData('VWM_response.stopped', VWM_response.tStop)
+        # check responses
+        if key_resp_VWM.keys in ['', [], None]:  # No response was made
+            key_resp_VWM.keys = None
+        trials_single_probe.addData('key_resp_VWM.keys',key_resp_VWM.keys)
+        if key_resp_VWM.keys != None:  # we had a response
+            trials_single_probe.addData('key_resp_VWM.rt', key_resp_VWM.rt)
+            trials_single_probe.addData('key_resp_VWM.duration', key_resp_VWM.duration)
+        # using non-slip timing so subtract the expected duration of this Routine (unless ended on request)
+        if VWM_response.maxDurationReached:
+            routineTimer.addTime(-VWM_response.maxDuration)
+        elif VWM_response.forceEnded:
+            routineTimer.reset()
+        else:
+            routineTimer.addTime(-3.000000)
+        
+        # --- Prepare to start Routine "ITI" ---
+        # create an object to store info about Routine ITI
+        ITI = data.Routine(
+            name='ITI',
+            components=[ITI_fix],
+        )
+        ITI.status = NOT_STARTED
+        continueRoutine = True
+        # update component parameters for each repeat
+        # store start times for ITI
+        ITI.tStartRefresh = win.getFutureFlipTime(clock=globalClock)
+        ITI.tStart = globalClock.getTime(format='float')
+        ITI.status = STARTED
+        thisExp.addData('ITI.started', ITI.tStart)
+        ITI.maxDuration = 1
+        # keep track of which components have finished
+        ITIComponents = ITI.components
+        for thisComponent in ITI.components:
+            thisComponent.tStart = None
+            thisComponent.tStop = None
+            thisComponent.tStartRefresh = None
+            thisComponent.tStopRefresh = None
+            if hasattr(thisComponent, 'status'):
+                thisComponent.status = NOT_STARTED
+        # reset timers
+        t = 0
+        _timeToFirstFrame = win.getFutureFlipTime(clock="now")
+        frameN = -1
+        
+        # --- Run Routine "ITI" ---
+        ITI.forceEnded = routineForceEnded = not continueRoutine
+        while continueRoutine and routineTimer.getTime() < 1.0:
+            # if trial has changed, end Routine now
+            if hasattr(thisTrials_single_probe, 'status') and thisTrials_single_probe.status == STOPPING:
+                continueRoutine = False
+            # get current time
+            t = routineTimer.getTime()
+            tThisFlip = win.getFutureFlipTime(clock=routineTimer)
+            tThisFlipGlobal = win.getFutureFlipTime(clock=None)
+            frameN = frameN + 1  # number of completed frames (so 0 is the first frame)
+            # update/draw components on each frame
+            # is it time to end the Routine? (based on local clock)
+            if tThisFlip > ITI.maxDuration-frameTolerance:
+                ITI.maxDurationReached = True
+                continueRoutine = False
+            
+            # *ITI_fix* updates
+            
+            # if ITI_fix is starting this frame...
+            if ITI_fix.status == NOT_STARTED and tThisFlip >= 0.5-frameTolerance:
+                # keep track of start time/frame for later
+                ITI_fix.frameNStart = frameN  # exact frame index
+                ITI_fix.tStart = t  # local t and not account for scr refresh
+                ITI_fix.tStartRefresh = tThisFlipGlobal  # on global time
+                win.timeOnFlip(ITI_fix, 'tStartRefresh')  # time at next scr refresh
+                # add timestamp to datafile
+                thisExp.timestampOnFlip(win, 'ITI_fix.started')
+                # update status
+                ITI_fix.status = STARTED
+                ITI_fix.setAutoDraw(True)
+            
+            # if ITI_fix is active this frame...
+            if ITI_fix.status == STARTED:
+                # update params
+                pass
+            
+            # if ITI_fix is stopping this frame...
+            if ITI_fix.status == STARTED:
+                # is it time to stop? (based on global clock, using actual start)
+                if tThisFlipGlobal > ITI_fix.tStartRefresh + 0.5-frameTolerance:
+                    # keep track of stop time/frame for later
+                    ITI_fix.tStop = t  # not accounting for scr refresh
+                    ITI_fix.tStopRefresh = tThisFlipGlobal  # on global time
+                    ITI_fix.frameNStop = frameN  # exact frame index
+                    # add timestamp to datafile
+                    thisExp.timestampOnFlip(win, 'ITI_fix.stopped')
+                    # update status
+                    ITI_fix.status = FINISHED
+                    ITI_fix.setAutoDraw(False)
+            
+            # check for quit (typically the Esc key)
+            if defaultKeyboard.getKeys(keyList=["escape"]):
+                thisExp.status = FINISHED
+            if thisExp.status == FINISHED or endExpNow:
+                endExperiment(thisExp, win=win)
+                return
+            # pause experiment here if requested
+            if thisExp.status == PAUSED:
+                pauseExperiment(
+                    thisExp=thisExp, 
+                    win=win, 
+                    timers=[routineTimer, globalClock], 
+                    currentRoutine=ITI,
+                )
+                # skip the frame we paused on
+                continue
+            
+            # check if all components have finished
+            if not continueRoutine:  # a component has requested a forced-end of Routine
+                ITI.forceEnded = routineForceEnded = True
+                break
+            continueRoutine = False  # will revert to True if at least one component still running
+            for thisComponent in ITI.components:
+                if hasattr(thisComponent, "status") and thisComponent.status != FINISHED:
+                    continueRoutine = True
+                    break  # at least one component has not yet finished
+            
+            # refresh the screen
+            if continueRoutine:  # don't flip if this routine is over or we'll get a blank screen
+                win.flip()
+        
+        # --- Ending Routine "ITI" ---
+        for thisComponent in ITI.components:
+            if hasattr(thisComponent, "setAutoDraw"):
+                thisComponent.setAutoDraw(False)
+        # store stop times for ITI
+        ITI.tStop = globalClock.getTime(format='float')
+        ITI.tStopRefresh = tThisFlipGlobal
+        thisExp.addData('ITI.stopped', ITI.tStop)
+        # using non-slip timing so subtract the expected duration of this Routine (unless ended on request)
+        if ITI.maxDurationReached:
+            routineTimer.addTime(-ITI.maxDuration)
+        elif ITI.forceEnded:
+            routineTimer.reset()
+        else:
+            routineTimer.addTime(-1.000000)
+        # mark thisTrials_single_probe as finished
+        if hasattr(thisTrials_single_probe, 'status'):
+            thisTrials_single_probe.status = FINISHED
+        # if awaiting a pause, pause now
+        if trials_single_probe.status == PAUSED:
+            thisExp.status = PAUSED
+            pauseExperiment(
+                thisExp=thisExp, 
+                win=win, 
+                timers=[globalClock], 
+            )
+            # once done pausing, restore running status
+            trials_single_probe.status = STARTED
+        thisExp.nextEntry()
+        
+    # completed 1.0 repeats of 'trials_single_probe'
+    trials_single_probe.status = FINISHED
+    
+    if thisSession is not None:
+        # if running in a Session with a Liaison client, send data up to now
+        thisSession.sendExperimentData()
+    
+    # --- Prepare to start Routine "sequence_probe_instructions" ---
+    # create an object to store info about Routine sequence_probe_instructions
+    sequence_probe_instructions = data.Routine(
+        name='sequence_probe_instructions',
+        components=[text_seq_instructions, key_resp_seq_instructions],
+    )
+    sequence_probe_instructions.status = NOT_STARTED
+    continueRoutine = True
+    # update component parameters for each repeat
+    # create starting attributes for key_resp_seq_instructions
+    key_resp_seq_instructions.keys = []
+    key_resp_seq_instructions.rt = []
+    _key_resp_seq_instructions_allKeys = []
+    # store start times for sequence_probe_instructions
+    sequence_probe_instructions.tStartRefresh = win.getFutureFlipTime(clock=globalClock)
+    sequence_probe_instructions.tStart = globalClock.getTime(format='float')
+    sequence_probe_instructions.status = STARTED
+    thisExp.addData('sequence_probe_instructions.started', sequence_probe_instructions.tStart)
+    sequence_probe_instructions.maxDuration = None
+    # keep track of which components have finished
+    sequence_probe_instructionsComponents = sequence_probe_instructions.components
+    for thisComponent in sequence_probe_instructions.components:
+        thisComponent.tStart = None
+        thisComponent.tStop = None
+        thisComponent.tStartRefresh = None
+        thisComponent.tStopRefresh = None
+        if hasattr(thisComponent, 'status'):
+            thisComponent.status = NOT_STARTED
+    # reset timers
+    t = 0
+    _timeToFirstFrame = win.getFutureFlipTime(clock="now")
+    frameN = -1
+    
+    # --- Run Routine "sequence_probe_instructions" ---
+    sequence_probe_instructions.forceEnded = routineForceEnded = not continueRoutine
+    while continueRoutine:
+        # get current time
+        t = routineTimer.getTime()
+        tThisFlip = win.getFutureFlipTime(clock=routineTimer)
+        tThisFlipGlobal = win.getFutureFlipTime(clock=None)
+        frameN = frameN + 1  # number of completed frames (so 0 is the first frame)
+        # update/draw components on each frame
+        
+        # *text_seq_instructions* updates
+        
+        # if text_seq_instructions is starting this frame...
+        if text_seq_instructions.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
+            # keep track of start time/frame for later
+            text_seq_instructions.frameNStart = frameN  # exact frame index
+            text_seq_instructions.tStart = t  # local t and not account for scr refresh
+            text_seq_instructions.tStartRefresh = tThisFlipGlobal  # on global time
+            win.timeOnFlip(text_seq_instructions, 'tStartRefresh')  # time at next scr refresh
+            # add timestamp to datafile
+            thisExp.timestampOnFlip(win, 'text_seq_instructions.started')
+            # update status
+            text_seq_instructions.status = STARTED
+            text_seq_instructions.setAutoDraw(True)
+        
+        # if text_seq_instructions is active this frame...
+        if text_seq_instructions.status == STARTED:
+            # update params
+            pass
+        
+        # *key_resp_seq_instructions* updates
+        waitOnFlip = False
+        
+        # if key_resp_seq_instructions is starting this frame...
+        if key_resp_seq_instructions.status == NOT_STARTED and tThisFlip >= 0.5-frameTolerance:
+            # keep track of start time/frame for later
+            key_resp_seq_instructions.frameNStart = frameN  # exact frame index
+            key_resp_seq_instructions.tStart = t  # local t and not account for scr refresh
+            key_resp_seq_instructions.tStartRefresh = tThisFlipGlobal  # on global time
+            win.timeOnFlip(key_resp_seq_instructions, 'tStartRefresh')  # time at next scr refresh
+            # add timestamp to datafile
+            thisExp.timestampOnFlip(win, 'key_resp_seq_instructions.started')
+            # update status
+            key_resp_seq_instructions.status = STARTED
+            # keyboard checking is just starting
+            waitOnFlip = True
+            win.callOnFlip(key_resp_seq_instructions.clock.reset)  # t=0 on next screen flip
+            win.callOnFlip(key_resp_seq_instructions.clearEvents, eventType='keyboard')  # clear events on next screen flip
+        if key_resp_seq_instructions.status == STARTED and not waitOnFlip:
+            theseKeys = key_resp_seq_instructions.getKeys(keyList=['space'], ignoreKeys=["escape"], waitRelease=False)
+            _key_resp_seq_instructions_allKeys.extend(theseKeys)
+            if len(_key_resp_seq_instructions_allKeys):
+                key_resp_seq_instructions.keys = _key_resp_seq_instructions_allKeys[-1].name  # just the last key pressed
+                key_resp_seq_instructions.rt = _key_resp_seq_instructions_allKeys[-1].rt
+                key_resp_seq_instructions.duration = _key_resp_seq_instructions_allKeys[-1].duration
+                # a response ends the routine
+                continueRoutine = False
+        
+        # check for quit (typically the Esc key)
+        if defaultKeyboard.getKeys(keyList=["escape"]):
+            thisExp.status = FINISHED
+        if thisExp.status == FINISHED or endExpNow:
+            endExperiment(thisExp, win=win)
+            return
+        # pause experiment here if requested
+        if thisExp.status == PAUSED:
+            pauseExperiment(
+                thisExp=thisExp, 
+                win=win, 
+                timers=[routineTimer, globalClock], 
+                currentRoutine=sequence_probe_instructions,
+            )
+            # skip the frame we paused on
+            continue
+        
+        # check if all components have finished
+        if not continueRoutine:  # a component has requested a forced-end of Routine
+            sequence_probe_instructions.forceEnded = routineForceEnded = True
+            break
+        continueRoutine = False  # will revert to True if at least one component still running
+        for thisComponent in sequence_probe_instructions.components:
+            if hasattr(thisComponent, "status") and thisComponent.status != FINISHED:
+                continueRoutine = True
+                break  # at least one component has not yet finished
+        
+        # refresh the screen
+        if continueRoutine:  # don't flip if this routine is over or we'll get a blank screen
+            win.flip()
+    
+    # --- Ending Routine "sequence_probe_instructions" ---
+    for thisComponent in sequence_probe_instructions.components:
+        if hasattr(thisComponent, "setAutoDraw"):
+            thisComponent.setAutoDraw(False)
+    # store stop times for sequence_probe_instructions
+    sequence_probe_instructions.tStop = globalClock.getTime(format='float')
+    sequence_probe_instructions.tStopRefresh = tThisFlipGlobal
+    thisExp.addData('sequence_probe_instructions.stopped', sequence_probe_instructions.tStop)
+    # check responses
+    if key_resp_seq_instructions.keys in ['', [], None]:  # No response was made
+        key_resp_seq_instructions.keys = None
+    thisExp.addData('key_resp_seq_instructions.keys',key_resp_seq_instructions.keys)
+    if key_resp_seq_instructions.keys != None:  # we had a response
+        thisExp.addData('key_resp_seq_instructions.rt', key_resp_seq_instructions.rt)
+        thisExp.addData('key_resp_seq_instructions.duration', key_resp_seq_instructions.duration)
+    thisExp.nextEntry()
+    # the Routine "sequence_probe_instructions" was not non-slip safe, so reset the non-slip timer
+    routineTimer.reset()
+    
+    # --- Prepare to start Routine "ITI" ---
+    # create an object to store info about Routine ITI
+    ITI = data.Routine(
+        name='ITI',
+        components=[ITI_fix],
+    )
+    ITI.status = NOT_STARTED
+    continueRoutine = True
+    # update component parameters for each repeat
+    # store start times for ITI
+    ITI.tStartRefresh = win.getFutureFlipTime(clock=globalClock)
+    ITI.tStart = globalClock.getTime(format='float')
+    ITI.status = STARTED
+    thisExp.addData('ITI.started', ITI.tStart)
+    ITI.maxDuration = 1
+    # keep track of which components have finished
+    ITIComponents = ITI.components
+    for thisComponent in ITI.components:
+        thisComponent.tStart = None
+        thisComponent.tStop = None
+        thisComponent.tStartRefresh = None
+        thisComponent.tStopRefresh = None
+        if hasattr(thisComponent, 'status'):
+            thisComponent.status = NOT_STARTED
+    # reset timers
+    t = 0
+    _timeToFirstFrame = win.getFutureFlipTime(clock="now")
+    frameN = -1
+    
+    # --- Run Routine "ITI" ---
+    ITI.forceEnded = routineForceEnded = not continueRoutine
+    while continueRoutine and routineTimer.getTime() < 1.0:
+        # get current time
+        t = routineTimer.getTime()
+        tThisFlip = win.getFutureFlipTime(clock=routineTimer)
+        tThisFlipGlobal = win.getFutureFlipTime(clock=None)
+        frameN = frameN + 1  # number of completed frames (so 0 is the first frame)
+        # update/draw components on each frame
+        # is it time to end the Routine? (based on local clock)
+        if tThisFlip > ITI.maxDuration-frameTolerance:
+            ITI.maxDurationReached = True
+            continueRoutine = False
+        
+        # *ITI_fix* updates
+        
+        # if ITI_fix is starting this frame...
+        if ITI_fix.status == NOT_STARTED and tThisFlip >= 0.5-frameTolerance:
+            # keep track of start time/frame for later
+            ITI_fix.frameNStart = frameN  # exact frame index
+            ITI_fix.tStart = t  # local t and not account for scr refresh
+            ITI_fix.tStartRefresh = tThisFlipGlobal  # on global time
+            win.timeOnFlip(ITI_fix, 'tStartRefresh')  # time at next scr refresh
+            # add timestamp to datafile
+            thisExp.timestampOnFlip(win, 'ITI_fix.started')
+            # update status
+            ITI_fix.status = STARTED
+            ITI_fix.setAutoDraw(True)
+        
+        # if ITI_fix is active this frame...
+        if ITI_fix.status == STARTED:
+            # update params
+            pass
+        
+        # if ITI_fix is stopping this frame...
+        if ITI_fix.status == STARTED:
+            # is it time to stop? (based on global clock, using actual start)
+            if tThisFlipGlobal > ITI_fix.tStartRefresh + 0.5-frameTolerance:
+                # keep track of stop time/frame for later
+                ITI_fix.tStop = t  # not accounting for scr refresh
+                ITI_fix.tStopRefresh = tThisFlipGlobal  # on global time
+                ITI_fix.frameNStop = frameN  # exact frame index
+                # add timestamp to datafile
+                thisExp.timestampOnFlip(win, 'ITI_fix.stopped')
+                # update status
+                ITI_fix.status = FINISHED
+                ITI_fix.setAutoDraw(False)
+        
+        # check for quit (typically the Esc key)
+        if defaultKeyboard.getKeys(keyList=["escape"]):
+            thisExp.status = FINISHED
+        if thisExp.status == FINISHED or endExpNow:
+            endExperiment(thisExp, win=win)
+            return
+        # pause experiment here if requested
+        if thisExp.status == PAUSED:
+            pauseExperiment(
+                thisExp=thisExp, 
+                win=win, 
+                timers=[routineTimer, globalClock], 
+                currentRoutine=ITI,
+            )
+            # skip the frame we paused on
+            continue
+        
+        # check if all components have finished
+        if not continueRoutine:  # a component has requested a forced-end of Routine
+            ITI.forceEnded = routineForceEnded = True
+            break
+        continueRoutine = False  # will revert to True if at least one component still running
+        for thisComponent in ITI.components:
+            if hasattr(thisComponent, "status") and thisComponent.status != FINISHED:
+                continueRoutine = True
+                break  # at least one component has not yet finished
+        
+        # refresh the screen
+        if continueRoutine:  # don't flip if this routine is over or we'll get a blank screen
+            win.flip()
+    
+    # --- Ending Routine "ITI" ---
+    for thisComponent in ITI.components:
+        if hasattr(thisComponent, "setAutoDraw"):
+            thisComponent.setAutoDraw(False)
+    # store stop times for ITI
+    ITI.tStop = globalClock.getTime(format='float')
+    ITI.tStopRefresh = tThisFlipGlobal
+    thisExp.addData('ITI.stopped', ITI.tStop)
+    # using non-slip timing so subtract the expected duration of this Routine (unless ended on request)
+    if ITI.maxDurationReached:
+        routineTimer.addTime(-ITI.maxDuration)
+    elif ITI.forceEnded:
+        routineTimer.reset()
+    else:
+        routineTimer.addTime(-1.000000)
+    thisExp.nextEntry()
+    
     # set up handler to look after randomisation of conditions etc
     trials = data.TrialHandler2(
         name='trials',
-        nReps=2.0, 
-        method='random', 
+        nReps=1.0, 
+        method='fullRandom', 
         extraInfo=expInfo, 
         originPath=-1, 
-        trialList=data.importConditions(
-        'experiment_control_files/trial-types_aln_2025-12-08.csv', 
-        selection='0'
-    )
-    , 
+        trialList=[None], 
         seed=None, 
     )
     thisExp.addLoop(trials)  # add the loop to the experiment
@@ -553,7 +2163,7 @@ def run(expInfo, thisExp, win, globalClock=None, thisSession=None):
                 segment_coord = get_random_path_coord(path_coords[segment-1])
         
             path_coords.append(segment_coord)
-        print(path_coords)
+        #print(path_coords)
         
         # Initialize path steps
         segment = 0
@@ -653,7 +2263,7 @@ def run(expInfo, thisExp, win, globalClock=None, thisSession=None):
                 # update params
                 mem_disc.setFillColor(disc_color, log=False)
                 mem_disc.setPos(disc_position, log=False)
-                mem_disc.setLineColor('white', log=False)
+                mem_disc.setLineColor(disc_color, log=False)
             
             # *mem_fix* updates
             
@@ -714,9 +2324,6 @@ def run(expInfo, thisExp, win, globalClock=None, thisSession=None):
         VWM_memory_display.tStop = globalClock.getTime(format='float')
         VWM_memory_display.tStopRefresh = tThisFlipGlobal
         thisExp.addData('VWM_memory_display.stopped', VWM_memory_display.tStop)
-        # Run 'End Routine' code from memory_sequence_code
-        # pause for retention interval
-        disc_color = gray
         # the Routine "VWM_memory_display" was not non-slip safe, so reset the non-slip timer
         routineTimer.reset()
         
@@ -854,7 +2461,7 @@ def run(expInfo, thisExp, win, globalClock=None, thisSession=None):
         path_coords_probe = path_coords.copy() # PYTHON VARIABLES ARE DUMB
         probe_length = path_length # Int, don't need to copy.
         
-        print(trials.thisN)
+        #print(trials.thisN)
         print(memory_type)
         print(probe_type)
         print(probe_validity)
@@ -865,7 +2472,7 @@ def run(expInfo, thisExp, win, globalClock=None, thisSession=None):
                 print('generating a sequence lure')
                 # pick a position
                 lure_pos = int(round(random.uniform(1, path_length - 1),0))
-                print(probe_length)
+                #print(probe_length)
                 # swap with prior 
                 path_coords_probe[lure_pos] = path_coords[lure_pos - 1]
         #        print('path_cords_probe first swap')
@@ -909,8 +2516,8 @@ def run(expInfo, thisExp, win, globalClock=None, thisSession=None):
         #    else: # probe_type == "discrete"
         #        return
          
-        print(path_coords)
-        print(path_coords_probe)
+        #print(path_coords)
+        #print(path_coords_probe)
         
         # Initialize path steps
         segment = 0
@@ -925,7 +2532,6 @@ def run(expInfo, thisExp, win, globalClock=None, thisSession=None):
             
         if probe_type == "sequence":
             # set initial endpoint
-            print('got here 1')
             path_end = path_coords_probe[segment + 1]
         
         if probe_type == "sequence":
@@ -1016,7 +2622,7 @@ def run(expInfo, thisExp, win, globalClock=None, thisSession=None):
                 # update params
                 probe_disc.setFillColor(disc_color, log=False)
                 probe_disc.setPos(disc_position, log=False)
-                probe_disc.setLineColor('blue', log=False)
+                probe_disc.setLineColor(disc_color, log=False)
             
             # *probe_fix* updates
             
@@ -1432,7 +3038,7 @@ def run(expInfo, thisExp, win, globalClock=None, thisSession=None):
             trials.status = STARTED
         thisExp.nextEntry()
         
-    # completed 2.0 repeats of 'trials'
+    # completed 1.0 repeats of 'trials'
     trials.status = FINISHED
     
     if thisSession is not None:
