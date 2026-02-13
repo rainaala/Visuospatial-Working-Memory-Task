@@ -32,7 +32,7 @@
     <Param val="avg" valType="str" updates="None" name="blendMode"/>
     <Param val="float" valType="str" updates="None" name="clockFormat"/>
     <Param val="{'thisRow.t': 'priority.CRITICAL', 'expName': 'priority.LOW'}" valType="dict" updates="None" name="colPriority"/>
-    <Param val="0,0,0" valType="color" updates="None" name="color"/>
+    <Param val="" valType="color" updates="None" name="color"/>
     <Param val="rgb" valType="str" updates="None" name="colorSpace"/>
     <Param val="warning" valType="code" updates="None" name="consoleLoggingLevel"/>
     <Param val="default" valType="str" updates="None" name="ecSampleRate"/>
@@ -84,7 +84,7 @@
     <Routine name="VWM_memory_display">
       <RoutineSettingsComponent name="VWM_memory_display" plugin="None">
         <Param val="none" valType="str" updates="None" name="backgroundFit"/>
-        <Param val="" valType="str" updates="None" name="backgroundImg"/>
+        <Param val="abstract-art-3840x2160-23159.jpg" valType="str" updates="None" name="backgroundImg"/>
         <Param val="$[0,0,0]" valType="color" updates="None" name="color"/>
         <Param val="rgb" valType="str" updates="None" name="colorSpace"/>
         <Param val="" valType="str" updates="constant" name="desc"/>
@@ -101,7 +101,7 @@
       <CodeComponent name="memory_sequence_code" plugin="None">
         <Param val="import random&amp;#10;&amp;#10;random.seed = 1&amp;#10;&amp;#10;max_eccen = 0.4&amp;#10;&amp;#10;def get_random_path_coord( coords_to_avoid ):&amp;#10;    # Select random x and y values that are different from those in coords_to_avoid&amp;#10;    x = coords_to_avoid[0]&amp;#10;    while abs(x - coords_to_avoid[0]) &lt; 0.2:&amp;#10;       # x = round(max_eccen * random.uniform(-1, 1), 1)&amp;#10;        x = round(max_eccen * random.uniform(-1, 1) * 4, 0) / 4 # does this work?, YES&amp;#10;    y = coords_to_avoid[1]&amp;#10;    while abs(y - coords_to_avoid[1]) &lt; 0.2:&amp;#10;        y = round(max_eccen * random.uniform(-1, 1), 1)&amp;#10;    coord = (x,y)&amp;#10;    return coord" valType="extendedCode" updates="constant" name="Before Experiment"/>
         <Param val="" valType="extendedCode" updates="constant" name="Before JS Experiment"/>
-        <Param val="# Set path parameters&amp;#10;path_length = 5&amp;#10;pause_duration = 0.6 # in seconds&amp;#10;retention_interval = 3.0 # 1000 ms&amp;#10;&amp;#10;# Movement speed (adjust for smoothness)&amp;#10;#step_size = 0.01 # speeding up for debugging&amp;#10;step_size = 0.008&amp;#10;&amp;#10;# colors &amp;#10;#white = [1,1,1]&amp;#10;#gray = [0,0,0]&amp;#10;disc_color = [1,1,1]" valType="extendedCode" updates="constant" name="Begin Experiment"/>
+        <Param val="# Set path parameters&amp;#10;path_length = 5&amp;#10;pause_duration = 0.6 # in seconds&amp;#10;retention_interval = 3.0 # 1000 ms&amp;#10;&amp;#10;# Movement speed (adjust for smoothness)&amp;#10;#step_size = 0.01 # speeding up for debugging&amp;#10;step_size = 0.03&amp;#10;&amp;#10;# colors &amp;#10;#white = [1,1,1]&amp;#10;#gray = [0,0,0]&amp;#10;disc_color = [1,1,1]" valType="extendedCode" updates="constant" name="Begin Experiment"/>
         <Param val="" valType="extendedCode" updates="constant" name="Begin JS Experiment"/>
         <Param val="" valType="extendedCode" updates="constant" name="Begin JS Routine"/>
         <Param val="# Get locations for this trial&amp;#10;path_coords = []&amp;#10;## path coords is a list of (x,y) tuples&amp;#10;for segment in range(path_length):&amp;#10;    if segment == 0:&amp;#10;        segment_coord = (0,0)&amp;#10;    else:&amp;#10;        segment_coord = get_random_path_coord(path_coords[segment-1])&amp;#10;&amp;#10;    path_coords.append(segment_coord)&amp;#10;#print(path_coords)&amp;#10;&amp;#10;# Initialize path steps&amp;#10;segment = 0&amp;#10;&amp;#10;# set initial disc position&amp;#10;disc_position = path_coords[segment]&amp;#10;#disc_color = white&amp;#10;disc_alpha = 1&amp;#10;path_end = path_coords[segment + 1]&amp;#10;&amp;#10;# start pause timer&amp;#10;pause_timer = core.CountdownTimer(pause_duration)&amp;#10;&amp;#10;# add data to output&amp;#10;thisExp.addData('path_coords', path_coords)&amp;#10;&amp;#10;" valType="extendedCode" updates="constant" name="Begin Routine"/>
